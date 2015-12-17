@@ -2,6 +2,8 @@ var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+var players = {};
+
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
@@ -22,7 +24,7 @@ io.on('connection', function(socket){
 				console.log('addplayer: ' + playername);
 				console.log('room: ' + room);
 
-        socket.username = username;
+        socket.username = playername;
         socket.room = room
         players[playername] = playername;
 
@@ -30,7 +32,7 @@ io.on('connection', function(socket){
         // echo to client they've connected
         socket.emit('statusmessage', 'SERVER', 'you have connected to ' + room);
         // echo to room that a person has connected to their room
-        socket.broadcast.to(room).emit('statusmessage', 'SERVER', username + ' has connected to this room');
+        socket.broadcast.to(room).emit('statusmessage', 'SERVER', playername + ' has connected to this room');
     });
 
 
