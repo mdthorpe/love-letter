@@ -1,13 +1,14 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var path = require('path');
+var app = require('express')(),
+    http = require('http').Server(app),
+    io = require('socket.io')(http),
+    path = require('path');
 
-var PLAYERS = {};
-var HOST = {};
-var ROOM = 'AAAA';
+var PLAYERS = {},
+    HOST = {},
+    ROOM = 'AAAA';
 
 app.set('view engine', 'jade');
+app.use(express.static('public'));
 
 app.get('/host', function (req, res) {
   res.render('host', { room: ROOM });
@@ -21,11 +22,6 @@ app.get('/', function (req, res){
   res.redirect('/host');
 });
 
-app.get('/js/:file', function (req,res) {
-  var file = req.params.file;
-  res.sendFile(path.join(__dirname + '/js/' + file));
-});
-
 io.on('connection', function (socket) {
 
     // when the client emits 'addplayer', this listens and executes
@@ -35,22 +31,26 @@ io.on('connection', function (socket) {
 
         socket.username = playername;
         socket.room = ROOM
-        PLAYERS[playername] = playername;
+        PLAYERS[playername] = socket.id;
 
         socket.join(ROOM);
         // echo to client they've connected
         socket.emit('statusmessage', 'SERVER', 'you have connected to ' + ROOM);
         // echo to room that a person has connected to their room
         socket.broadcast.to(ROOM).emit('statusmessage', 'SERVER', playername + ' has connected to this room');
+        console.log(PLAYERS);
+        console.log(HOST);
+        socket.broadcast.to(HOST).emit('playerlist', PLAYERS);
     });
 
     // when the client emits 'addhost', this listens and executes
     socket.on('addhost', function(callback){
         console.log('adding host: ' + socket.id);
         console.log('room: ' + ROOM);
-
+        
         socket.username = 'HOST';
-        socket.room = ROOM
+        socket.room = ROOM;
+
         HOST = socket.id;
 
         socket.join(ROOM);

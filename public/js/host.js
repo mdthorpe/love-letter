@@ -17,11 +17,16 @@ var status_message = function(player, msg) {
   $("#messages").append($('<li>').text(txt));
 };
 
+var update_player_list = function (data) {
+  console.log(data);
+}
+
 $( document ).ready(function() {
   join_as_host();
 });
 
 socket.on('statusmessage', status_message);
+socket.on('playerlist', update_player_list);
 
 
 // Server States
