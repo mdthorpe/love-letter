@@ -1,4 +1,5 @@
-var app = require('express')(),
+var express = require('express');
+    app = require('express')(),
     http = require('http').Server(app),
     io = require('socket.io')(http),
     path = require('path');
@@ -6,6 +7,7 @@ var app = require('express')(),
 var PLAYERS = {},
     HOST = {},
     ROOM = 'AAAA';
+    PORT = 3000;
 
 app.set('view engine', 'jade');
 app.use(express.static('public'));
@@ -31,7 +33,7 @@ io.on('connection', function (socket) {
 
         socket.username = playername;
         socket.room = ROOM
-        PLAYERS[playername] = socket.id;
+        PLAYERS[socket.id] = playername;
 
         socket.join(ROOM);
         // echo to client they've connected
@@ -60,12 +62,13 @@ io.on('connection', function (socket) {
     });
 
   socket.on('disconnect', function(){
-    console.log('user disconnected');
+    delete PLAYERS[socket.id];
+    socket.broadcast.to(HOST).emit('playerlist', PLAYERS);
   });
 
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(PORT, function(){
+  console.log('listening on *:' + PORT);
 });
 
