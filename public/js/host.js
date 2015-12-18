@@ -14,7 +14,7 @@ var join_as_host = function() {
 
 var status_message = function(player, msg) {
   var txt = player + ': ' + msg;
-  $("#messages").append($('<li>').text(txt));
+  $("#messages").prepend($('<li>').text(txt));
 };
 
 var update_player_list = function (data) {
