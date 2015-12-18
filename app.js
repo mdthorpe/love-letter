@@ -3,24 +3,26 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var players = {};
+var room = 'AAAA';
+
+app.set('view engine', 'jade');
+
+app.get('/host', function (req, res) {
+  res.render('host', { room_code: room });
+});
+
+app.get('/player', function (req, res) {
+  res.render('player', { room_code: room });
+});
 
 app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-
-app.get('/host', function(req, res){
-  res.sendFile(__dirname + '/host.html');
-});
-
-app.get('/player', function(req, res){
-  res.sendFile(__dirname + '/player.html');
+  res.redirect('/host');
 });
 
 io.on('connection', function(socket){
 
     // when the client emits 'adduser', this listens and executes
     socket.on('addplayer', function(playername){
-				var room = 'AAAA';
 				console.log('addplayer: ' + playername);
 				console.log('room: ' + room);
 
