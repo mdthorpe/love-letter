@@ -1,33 +1,27 @@
-doctype html
-html
-  head
-    title Socket.IO chat
-    style.
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font: 13px Helvetica, Arial; }
-      #messages { background: #ccc; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages li { padding: 5px 10px; }
-      #messages li:nth-child(odd) { background: #eee; }
+doctype html5
+head
+  title
+    | player :: 
+    block title
+      | Love Letter
+  style.
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font: 13px Helvetica, Arial; }
+    #messages { background: #ccc; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+    form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+    button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+    #messages { list-style-type: none; margin: 0; padding: 0; }
+    #messages li { padding: 5px 10px; }
+    #messages li:nth-child(odd) { background: #eee; }
   body
     #topbar
       form#playername
         input#p(autocomplete='off')
         button Set
-    ul#messages
-    script(src='https://cdn.socket.io/socket.io-1.3.7.js')
-    script(src='http://code.jquery.com/jquery-2.1.4.js')
-    script.
-      var socket = io();
-      $('#playername').submit(function(){
-        socket.emit('addplayer', $('#p').val());
-        $('#topbar').html($('#p').val());
-        return false;
-      });
-      // handle incomming messages
-      socket.on('statusmessage', function(player, msg) {
-        var txt = player + ': ' + msg;
-        $("#messages").append($('<li>').text(txt));
-      });
+    #cards
+    #statusbar
+      ul#messages
+  script(src='https://cdn.socket.io/socket.io-1.3.7.js')
+  script(src='http://code.jquery.com/jquery-2.1.4.js')
+  script(src='js/player.js')
+
