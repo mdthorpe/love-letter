@@ -1,59 +1,66 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var path = require('path');
 
-var players = {};
-var room = 'AAAA';
+var PLAYERS = {};
+var HOST = {};
+var ROOM = 'AAAA';
 
 app.set('view engine', 'jade');
 
 app.get('/host', function (req, res) {
-  res.render('host', { room_code: room });
+  res.render('host', { room: ROOM });
 });
 
 app.get('/player', function (req, res) {
-  res.render('player', { room_code: room });
+  res.render('player', { room: ROOM });
 });
 
-app.get('/', function(req, res){
+app.get('/', function (req, res){
   res.redirect('/host');
 });
 
-io.on('connection', function(socket){
+app.get('/js/:file', function (req,res) {
+  var file = req.params.file;
+  res.sendFile(path.join(__dirname + '/js/' + file));
+});
 
-    // when the client emits 'adduser', this listens and executes
+io.on('connection', function (socket) {
+
+    // when the client emits 'addplayer', this listens and executes
     socket.on('addplayer', function(playername){
 				console.log('addplayer: ' + playername);
-				console.log('room: ' + room);
+				console.log('room: ' + ROOM);
 
         socket.username = playername;
-        socket.room = room
-        players[playername] = playername;
+        socket.room = ROOM
+        PLAYERS[playername] = playername;
 
-        socket.join(room);
+        socket.join(ROOM);
         // echo to client they've connected
-        socket.emit('statusmessage', 'SERVER', 'you have connected to ' + room);
+        socket.emit('statusmessage', 'SERVER', 'you have connected to ' + ROOM);
         // echo to room that a person has connected to their room
-        socket.broadcast.to(room).emit('statusmessage', 'SERVER', playername + ' has connected to this room');
+        socket.broadcast.to(ROOM).emit('statusmessage', 'SERVER', playername + ' has connected to this room');
     });
 
+    // when the client emits 'addhost', this listens and executes
+    socket.on('addhost', function(callback){
+        console.log('adding host: ' + socket.id);
+        console.log('room: ' + ROOM);
 
+        socket.username = 'HOST';
+        socket.room = ROOM
+        HOST = socket.id;
+
+        socket.join(ROOM);
+        socket.broadcast.to(ROOM).emit('statusmessage', 'SERVER', socket.username + ' has connected to this room');
+
+        callback('Host is ready!');
+    });
 
   socket.on('disconnect', function(){
     console.log('user disconnected');
-  });
-
-  socket.on('chat message', function(msg){
-    console.log('message: ' + msg + ' in ' + socket.room);
-    io.sockets["in"](socket.room).emit('chat message', msg);
-  });
-
-  socket.on('join room', function(room_id){
-    console.log('socket: ' + socket.id + ' is joining room: ' + room_id);
-    socket.join(room_id);
-    // welcome to the room
-    var msg = "Welcome " + socket.id + " to the room!"
-    io.to(room_id).emit('chat message', msg);
   });
 
 });
