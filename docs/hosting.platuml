@@ -1,0 +1,15 @@
+
+title Starting a New Game
+actor Player as P
+actor HostBrowser as H
+participant "Room Server" as R
+participant "Game Server" as G
+
+H->R: GET /
+R->H: / (Main Menu)
+H->R: GET /new_game
+R->R: Spawn new game server container
+R->H: 301: //HOST:GAME_PORT/host
+H->G: GET /host (game table)
+G->H: Game Board
+G<->H: Open WebSocket

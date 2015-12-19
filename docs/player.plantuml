@@ -1,0 +1,12 @@
+
+title Starting a New Game
+actor Player as P
+participant "Room Server" as R
+participant "Game Server" as G
+
+P->R: GET /
+R->P: / (Main Menu)
+R->P: GET /join_game
+R->P: 301: //HOST:GAME_PORT/host
+P->G: GET /player
+G<->P: Open WebSocket 
