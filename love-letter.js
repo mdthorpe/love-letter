@@ -1,25 +1,30 @@
 var express = require('express');
     app = require('express')(),
     http = require('http').Server(app),
-    io = require('socket.io')(http),
-    path = require('path');
+    io = require('socket.io')(http);
+
+var path = require('path');
 
 var PLAYERS = {},
     HOST = {},
     ROOM = 'AAAA';
     PORT = 3000;
+    NUM_PLAYERS = 3;
 
 app.set('view engine', 'jade');
+
+// serve static content from public dir
 app.use(express.static('public'));
 
 app.get('/host', function (req, res) {
   res.render('host', { room: ROOM, 
-                       title: 'host: ' + ROOM + ' | Love Letter' });
+                       title: 'host: ' + ROOM,
+                       num_players: NUM_PLAYERS });
 });
 
 app.get('/player', function (req, res) {
   res.render('player', { room: ROOM,
-                         title: 'player: ' + ROOM + ' | Love Letter' }); 
+                         title: 'player: ' + ROOM }); 
 });
 
 app.get('/', function (req, res){
@@ -74,4 +79,3 @@ io.on('connection', function (socket) {
 http.listen(PORT, function(){
   console.log('listening on *:' + PORT);
 });
-
