@@ -1,3 +1,3 @@
 TODO
-
-- Display Active Players on Host
+- Ask for player name and then hide form
+- Ask for player ready, update host
