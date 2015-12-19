@@ -13,16 +13,14 @@ body {
   height: 101px; 
   overflow: scroll; text-align: bottom;
   font-size: 17px;
-  font-style: normal; }
-#messages { list-style-type: none; margin: 0; padding: 0; }
+  font-style: normal; 
+  list-style-type: none; 
+  margin: 0; 
+  padding: 0; 
+}
+
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }   
-#messages { 
-    background: #ccc; 
-    padding: 3px; position: fixed; 
-    bottom: 0; 
-    width: 100%; }
-#messages { list-style-type: none; margin: 0; padding: 0; }
 
 /* Host */
 #players { position: fixed; bottom: 121; width: 100%; }
@@ -34,16 +32,16 @@ body {
 #players li { background: #ddd;}
 
 /* player */
-#playername { display: none; }
+#player-name { display: none; }
 
-#set-playername {   
+#set-player-name {   
     position: relative;
     top: 30%;
     text-align: center;
     transform: translateY(-30%);
     font-size: 24px;
 }
-#set-playername input { 
+#set-player-name input { 
     border: 1px solid black; 
     padding: 10px; 
     line-height: auto;
@@ -53,7 +51,7 @@ body {
     width: 80%;
     font-size: 32px; }
 
-#set-playername button {
+#set-player-name button {
     font-size: 32px;
     background: rgb(210,211,211);
     border: none; 
@@ -63,7 +61,7 @@ body {
     width: 80%;
     padding: 10px; }
 
-#playerready {
+#player-ready {
     position: relative;
     top: 30%;
     text-align: center;
@@ -71,7 +69,8 @@ body {
     display: none;
  }
 
-#playerready button { 
+#player-ready button { 
+    font-family: 'Josefin Slab', serif;
     font-size: 72px;
     width: 80%; 
     height: 144px;
@@ -80,3 +79,18 @@ body {
     margin: auto;
 }
 
+#events { 
+    font-family: 'Ubuntu Mono';
+    font-size: 48px; 
+    font-style: italic;
+    padding: 3px; 
+    width: 100%; 
+    font-size: 17px;
+    font-style: normal; 
+    list-style-type: none; 
+    margin: 0; 
+    padding: 0; 
+    overflow: auto;
+}
+#events li { padding: 5px 10px; }
+#events li:nth-child(odd) { background: #eee; } 

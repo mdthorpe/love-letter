@@ -2,12 +2,12 @@ doctype html5
 html
   include ./includes/head.jade
   body
-    #playername Bob
-    form#set-playername
+    #player-name Bob
+    form#set-player-name
       h1 Your Name?
-      input#p(autocomplete='off')
+      input#p(autocomplete='off', autofocus)
       button Set
-    #playerready
+    #player-ready
       button Ready
     #cards
     #statusbar

@@ -2,6 +2,7 @@
   "node" : true,
   "globals": {
     "$": false,
-    "socket": false
+    "socket": false,
+    "document": false
   }
 }
