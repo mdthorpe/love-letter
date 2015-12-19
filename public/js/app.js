@@ -1,7 +1,9 @@
 var socket = io();
 
-// handle incomming messages
-socket.on('statusmessage', function(player, msg) {
+// status_messages
+var status_message = function(player, msg) {
   var txt = '<b>' + player + '</b>: ' + msg;
-  $("#messages").append($('<li>').html(txt));
-});
+  $("#messages").prepend($('<li>').html(txt));
+};
+
+socket.on('statusmessage', status_message);
