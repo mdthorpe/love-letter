@@ -1,52 +1,55 @@
 var socket = io();
 
-var host_status = function (msg) {
-  $("#host-status").text(msg); 
-};
-
-var socket_status = function (msg) {
-    $("#server-status").text(msg); 
-}
-
 var join_as_host = function() {
-  socket.emit('addhost', host_status);
-};
+  socket.emit('addhost', function (connected){
+    if(connected == true){
+      status_message("SYSTEM","Host Ready");
+    }else
+      status_message("SYSTEM","Host Failure");
+    }
+)};
 
 var status_message = function(player, msg) {
   var txt = player + ': ' + msg;
   $("#messages").prepend($('<li>').text(txt));
 };
 
-var update_player_list = function (data) {
-  console.log(data);
+var update_player_list = function (players) {
+  console.log(players);
+  $("#players").html('');
+  for (var player in players) {
+    $("#players").append($('<li>').text(players[player]));
+  }
 }
 
 $( document ).ready(function() {
   join_as_host();
 });
 
+// Host events
+//
 socket.on('statusmessage', status_message);
 socket.on('playerlist', update_player_list);
 
-
 // Server States
+//
 socket.on('connect', function() {
-  socket_status('connected');
+  status_message('SYSTEM','Socket Connected');
 } ); 
 
 socket.on('disconnect', function() {
-  socket_status('disconnected, waiting for reconnect');
+  status_message('SYSTEM','disconnected, waiting for reconnect');
 } ); 
 
 socket.on('reconnect', function() {
-  socket_status('connection ok');
+  status_message('SYSTEM','connection ok');
 } ); 
 
 socket.on('reconnecting', function(nextRetry) {
-  socket_status('trying to reconnect. nextRetry: ' +nextRetry);
+  status_message('SYSTEM','trying to reconnect. nextRetry: ' +nextRetry);
 } ); 
 
 socket.on('reconnect_failed', function() { 
-  socket_status("Reconnect failed"); 
+  status_message('SYSTEM',"Reconnect failed"); 
 });
 

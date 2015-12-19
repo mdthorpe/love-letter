@@ -44,7 +44,7 @@ io.on('connection', function (socket) {
         socket.broadcast.to(ROOM).emit('statusmessage', 'SERVER', playername + ' has connected to this room');
         console.log(PLAYERS);
         console.log(HOST);
-        socket.broadcast.to(HOST).emit('playerlist', PLAYERS);
+        socket.broadcast.to(ROOM).emit('playerlist', PLAYERS);
     });
 
     // when the client emits 'addhost', this listens and executes
@@ -59,8 +59,9 @@ io.on('connection', function (socket) {
 
         socket.join(ROOM);
         socket.broadcast.to(ROOM).emit('statusmessage', 'SERVER', socket.username + ' has connected to this room');
+        socket.emit('playerlist', PLAYERS);
+        callback(true);
 
-        callback('Host is ready!');
     });
 
   socket.on('disconnect', function(){
