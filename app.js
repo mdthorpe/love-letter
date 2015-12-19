@@ -13,11 +13,13 @@ app.set('view engine', 'jade');
 app.use(express.static('public'));
 
 app.get('/host', function (req, res) {
-  res.render('host', { room: ROOM });
+  res.render('host', { room: ROOM, 
+                       title: 'host: ' + ROOM + ' | Love Letter' });
 });
 
 app.get('/player', function (req, res) {
-  res.render('player', { room: ROOM });
+  res.render('player', { room: ROOM,
+                         title: 'player: ' + ROOM + ' | Love Letter' }); 
 });
 
 app.get('/', function (req, res){
