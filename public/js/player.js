@@ -23,7 +23,15 @@ var ask_player_ready = function () {
     return false;
 };
 
-var send_player_ready = function () {
+var set_ready = function () {
+    socket.emit('player-ready', function (callback) {
+        if(callback === true){
+          status_message("player","Player Ready");
+        }else
+          status_message("player","Failed to set Ready");
+        });     
+
+    $('#player-name').addClass('player-is-ready');
     return false;
 };
 

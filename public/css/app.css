@@ -94,3 +94,7 @@ body {
 }
 #events li { padding: 5px 10px; }
 #events li:nth-child(odd) { background: #eee; } 
+
+.player-is-ready {
+    background: #5c5 !important;
+}

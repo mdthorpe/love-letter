@@ -2,11 +2,20 @@ doctype html5
 html
   include ./includes/head.jade
   body
-    h1#room-name Room: 
+    h2#room-name Room: 
       !=room 
-    h1#num-players 
-      | Players: 
-      !=num_players
+    h3 Players
+    #waiting
+      | Total: 
+      != total_players
+    #connected
+      | Connected: 
+      span(id="connected-players") 0
+    #connected
+      | Ready: 
+      span(id="ready-players") 0  
+
+    players
     #gametable
       ul#players
     #statusbar
