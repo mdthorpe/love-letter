@@ -3,6 +3,7 @@
   "globals": {
     "$": false,
     "socket": false,
-    "document": false
+    "document": false,
+    "moment": false
   }
 }
