@@ -1,5 +1,8 @@
 "use strict";
 
+/*jshint -W117 */
+/*jshint -W079 */ 
+
 var socket = io();
 
 // status_messages

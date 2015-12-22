@@ -1,6 +1,7 @@
 "use strict";
 
 var join_as_host = function() {
+  /*jshint -W117 */
   socket.emit('addhost', function (players){
     if(players){
       update_player_list(players);
@@ -36,7 +37,7 @@ var update_ready = function (players) {
     return counter;
   };
   $("#ready-players").text(count.call(players));
-}
+};
 
 var update_connected = function (players) {
   var count = function (){
@@ -47,7 +48,7 @@ var update_connected = function (players) {
     return counter;
   };
   $("#connected-players").text(count.call(players));
-}
+};
 
 // Host events
 //

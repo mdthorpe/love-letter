@@ -12,7 +12,7 @@ var LISTENERS = {};
 
 var ROOM = 'AAAA';
 var PORT = 3000;
-var NUM_PLAYERS = 3;
+var NUM_PLAYERS = 2;
 
 // wildcard socket events
 var wildcard = require('socketio-wildcard')();
@@ -37,13 +37,13 @@ app.use(request_logger);
 
 app.get('/host', function (req, res) {
   res.render('host', { room: ROOM, 
-                       title: 'host:' + ROOM,
-                       total_players: NUM_PLAYERS });
+     title: 'host:' + ROOM,
+     total_players: NUM_PLAYERS });
 });
 
 app.get('/player', function (req, res) {
   res.render('player', { room: ROOM,
-                         title: 'player: ' + ROOM }); 
+   title: 'player: ' + ROOM }); 
 });
 
 app.get('/events', function (req, res) {
@@ -57,16 +57,20 @@ app.get('/', function (req, res){
 io.on('connection', function (socket) {
 
     var event_stream = function (msg) {
-          socket.broadcast.to(ROOM).emit('event', msg);
+        if (!isEmptyObject(msg) ) {
+            socket.broadcast.to(ROOM).emit('event', msg);
+        }
     };
+    
     socket.on('*', function (msg) {
-        event_stream({ "source": 'wildcard',
-                       "event" : msg});
+        event_stream({ "source": 'event',
+                       "recieved" : msg});
     });
 
     var broadcast_player_list = function () {
         event_stream({ "source": 'server',
-                       "event" : PLAYERS});
+                       "player-list" : PLAYERS});
+
         socket.broadcast.to(ROOM).emit('player-list', PLAYERS);
     };
 
@@ -77,22 +81,22 @@ io.on('connection', function (socket) {
             "name": playername,
             "connected": true,
             "ready" : false
-        }
+        };
 
-        //socket.username = player.name;
+        // set the player name
         PLAYERS[player.name] = player;
-
         socket.username = player.name;
+
+        // join the room channel
         socket.room = ROOM;
         socket.join(ROOM);
-
-        // echo to room that a person has connected to their room
         event_stream({ "source": 'player', 
-                       "event": playername + ' connected.'});
+                       "connect": playername});
 
         broadcast_player_list(); 
 
-        callback(true);     
+        callback(true);  
+        return false;   
     });
 
     // when the client emits 'addhost', this listens and executes
@@ -103,7 +107,7 @@ io.on('connection', function (socket) {
         socket.join(ROOM);
 
         event_stream({ "source": 'host', 
-                       "event": socket.id + ' connected.'});
+                       "connect": socket.id});
 
         broadcast_player_list();
 
@@ -124,21 +128,21 @@ io.on('connection', function (socket) {
         callback(true);
     });
 
-  socket.on('disconnect', function(){
-    if (PLAYERS[socket.username]){ 
-        event_stream({ "source": 'socket', 
-                       "event" : 'remove player: ' + PLAYERS[socket.username]});
+    socket.on('disconnect', function(){
+        if (PLAYERS[socket.username]){ 
+            event_stream({ "source": 'socket', 
+             "event" : 'remove player: ' + PLAYERS[socket.username]});
 
-        delete PLAYERS[socket.username]; 
-        broadcast_player_list();
-    }
-    if (HOSTS[socket.id]){ 
-        event_stream({ "source": 'socket', 
-                       "event" : 'remove host: ' + HOSTS[socket.id]});
+            delete PLAYERS[socket.username]; 
+            broadcast_player_list();
+        }
+        if (HOSTS[socket.id]){ 
+            event_stream({ "source": 'socket', 
+             "event" : 'remove host: ' + HOSTS[socket.id]});
 
-        delete HOSTS[socket.id]; 
-    }
-  });
+            delete HOSTS[socket.id]; 
+        }
+    });
 
   // Player Events
   //
@@ -146,12 +150,12 @@ io.on('connection', function (socket) {
     // echo to room that a person has connected to their room
     console.log(socket.username + ' ready.');
     event_stream({ "source": 'player', 
-                   "event": socket.username + ' ready.'});
+     "event": socket.username + ' ready.'});
     PLAYERS[socket.username].ready = true;
     broadcast_player_list();
-    
+
     callback(true);
-  });
+});
 
 });
 
@@ -160,3 +164,17 @@ io.on('connection', function (socket) {
 http.listen(PORT, function(){
   console.log('listening on *:' + PORT);
 });
+
+
+// Util functions
+//
+
+// Detect empty objects
+function isEmptyObject(obj) {
+  for (var key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      return false;
+    }
+  }
+  return true;
+}
