@@ -6,15 +6,15 @@ html
       !=room 
     ul#player-states
       li#total Total: 
-        != total_players
+        span(id="total-players")
+          != total_players
       li#connected Connected: 
         span(id="connected-players") 0
       li#ready Ready: 
-        span(id="ready-players") 0  
-
-    players
+        span(id="ready-players") 0
     #gametable
-      ul#players
+      
+    ul#players
     #statusbar
       ul#messages
   include ./includes/scripts.jade

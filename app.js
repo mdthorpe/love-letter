@@ -4,7 +4,9 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
 var path = require('path');
+var sleep = require('sleep');
 
 var PLAYERS = {};
 var HOSTS = {};
@@ -13,6 +15,9 @@ var LISTENERS = {};
 var ROOM = 'AAAA';
 var PORT = 3000;
 var NUM_PLAYERS = 2;
+
+var IN_GAME = false;
+var IN_ROUND = false;
 
 // wildcard socket events
 var wildcard = require('socketio-wildcard')();
@@ -150,13 +155,28 @@ io.on('connection', function (socket) {
     // echo to room that a person has connected to their room
     console.log(socket.username + ' ready.');
     event_stream({ "source": 'player', 
-     "event": socket.username + ' ready.'});
+                   "event": socket.username + ' ready.'});
     PLAYERS[socket.username].ready = true;
     broadcast_player_list();
 
     callback(true);
-});
+  });
 
+  // Game Events
+  socket.on('start-game', function(callback) {
+    if(IN_GAME === false) {
+      console.log("Starting Game");
+      event_stream({ "source": 'server', 
+                     "event": 'Game Starting'});
+      IN_GAME = true;
+    } else {
+      console.log("In Game");
+      event_stream({ "source": 'server', 
+                     "event": 'Game Running'});
+    }
+  });
+
+  return false;
 });
 
 //require('express-debug')(app);

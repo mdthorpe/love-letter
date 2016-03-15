@@ -4,13 +4,11 @@ var join_as_host = function() {
   /*jshint -W117 */
   socket.emit('addhost', function (players){
     if(players){
-      update_player_list(players);
-      update_connected(players);
-      update_ready(players);
+      update_host_view(players);
       status_message("SYSTEM","Host Ready");
     }else
       status_message("SYSTEM","Host Failure");
-    } );
+    });
 };
 
 var update_player_list = function (players) {
@@ -26,36 +24,46 @@ var update_player_list = function (players) {
   }
 };
 
-var update_ready = function (players) {
-  var count = function () {
+var count_ready_players = function (players) {
+  var counter= 0;
+  for(var p in this){
+    if(this[p].hasOwnProperty("ready") &&
+       this[p].ready === true)++counter;
+  }
+  return counter;
+};
 
-    var counter= 0;
-    for(var p in this){
-      if(this[p].hasOwnProperty("ready") &&
-         this[p].ready === true)++counter;
-    }
-    return counter;
-  };
-  $("#ready-players").text(count.call(players));
+var count_connected_players = function (players) {
+  var counter= 0;
+  for(var p in this){
+    if(this.hasOwnProperty(p))++counter;
+  }
+  return counter;
+}
+
+var update_ready = function (players) {
+  $("#ready-players").text(count_ready_players.call(players));
 };
 
 var update_connected = function (players) {
-  var count = function (){
-    var counter= 0;
-    for(var p in this){
-        if(this.hasOwnProperty(p))++counter;
-    }
-    return counter;
-  };
-  $("#connected-players").text(count.call(players));
+  $("#connected-players").text(count_connected_players.call(players));
 };
+
+var update_host_view = function (players) {
+  update_player_list(players);
+  update_connected(players);
+  update_ready(players);
+  if ( count_ready_players.call(players) === 
+    parseInt($("#total-players").text()) ) { 
+    status_message('HOST', 'All players ready'); 
+    socket.emit('start-game');
+  } 
+}
 
 // Host events
 //
 socket.on('player-list', function (players) {
-  update_player_list(players);
-  update_connected(players);
-  update_ready(players);
+  update_host_view(players);
   return false;
 });
 

@@ -8,9 +8,8 @@ html
       input#p(autocomplete='off', autofocus)
       button Set
     #player-ready
-      button(onClick='set_ready()') Ready
-    p#wait-fo-start Waiting for other players!
-    #cards
+      button(onMouseUp='set_ready()') Ready
+    #gamearea
     #statusbar
       ul#messages
   include ./includes/scripts.jade
