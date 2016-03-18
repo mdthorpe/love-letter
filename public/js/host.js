@@ -53,9 +53,9 @@ var update_host_view = function (players) {
   update_player_list(players);
   update_connected(players);
   update_ready(players);
-  if ( count_ready_players.call(players) === 
-    parseInt($("#total-players").text()) ) { 
-    status_message('HOST', 'All players ready'); 
+  if ( count_ready_players.call(players) ===
+    parseInt($("#total-players").text()) ) {
+    status_message('HOST', 'All players ready');
     socket.emit('start-game');
   } 
 }
