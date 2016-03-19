@@ -12,8 +12,17 @@ html
         span(id="connected-players") 0
       li#ready Ready: 
         span(id="ready-players") 0
-    #gametable
-      
+      li#inGame In Game: 
+        span(id="in-game")
+          = game_state["in-game"]
+    #game-table
+
+    #send-state 
+      button(onMouseUp='send_state()') Send State
+
+    #send-player-list 
+      button(onMouseUp='send_players()') Send Player List
+
     ul#players
     #statusbar
       ul#messages

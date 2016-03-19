@@ -40,6 +40,12 @@ var set_ready = function () {
     return false;
 };
 
+socket.on('game-state', function (game_state) {
+  console.log("game-state", game_state);
+  status_message('host', 'Game State Event');
+  return false;
+});
+
 $('#set-player-name').submit(function (){
     add_player();
     show_player_name();

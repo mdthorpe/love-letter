@@ -19,6 +19,11 @@ body {
   padding: 0; 
 }
 
+
+#game-area { 
+    display: none; 
+}
+
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }   
 
@@ -30,8 +35,18 @@ body {
 #players li { margin-left: 20px; padding: 10px 20px;}
 #players li { font-style: normal; text-align: center; }
 #players li { background: #ddd;}
+#players li { border: 5px solid: #ddd; }
+
+.player-is-ready {
+    background: #5c5 !important;
+}
+
+.player-is-turn {
+    border: 5px solid #c5c !important;
+}
 
 /* player */
+
 #player-name { display: none; }
 
 #set-player-name {   
@@ -94,10 +109,6 @@ body {
 }
 #events li { padding: 5px 10px; }
 #events li:nth-child(odd) { background: #eee; } 
-
-.player-is-ready {
-    background: #5c5 !important;
-}
 
 .disable-actions {
     pointer-events: none;

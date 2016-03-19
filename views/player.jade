@@ -2,14 +2,15 @@ doctype html5
 html
   include ./includes/head.jade
   body
-    #player-name Bob
+    #player-name
     form#set-player-name
       h1 Your Name?
       input#p(autocomplete='off', autofocus)
       button Set
     #player-ready
       button(onMouseUp='set_ready()') Ready
-    #gamearea
+    #game-area
+      h1 THIS IS THE GAME AREA
     #statusbar
       ul#messages
   include ./includes/scripts.jade
