@@ -3,14 +3,22 @@ html
   include ./includes/head.jade
   body
     #player-name
+    #game-area
+      #hand
+        #cards
+          ul
+            li 
+              img(src= "img/0_back.png" class="card-img" onClick="play_card(this)")
     form#set-player-name
       h1 Your Name?
       input#p(autocomplete='off', autofocus)
       button Set
     #player-ready
       button(onMouseUp='set_ready()') Ready
-    #game-area
-      h1 THIS IS THE GAME AREA
+    // #debug
+    //  button(onMouseUp='draw_card()') Draw Card
+    //  button(onMouseUp='play_card(0)') Play Card 1
+    //  button(onMouseUp='play_card(1)') Play Card 2
     #statusbar
       ul#messages
   include ./includes/scripts.jade

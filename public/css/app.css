@@ -21,8 +21,38 @@ body {
 
 
 #game-area { 
-    display: none; 
+  position: fixed;
+  top: 60px;
+  width: 100%;
 }
+
+#hand {
+  width: 98%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+#cards {
+  margin: 0 auto;
+}
+
+#cards ul { 
+  list-style: none;
+  list-style-type:none;
+  white-space:nowrap;
+  overflow-x:auto;
+
+}
+#cards ul li {
+  display:inline;
+  margin: 8px;
+}
+
+#cards img {
+    max-width: 60vw;
+    max-height: 80vh;
+}
+
 
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }   
@@ -47,7 +77,11 @@ body {
 
 /* player */
 
-#player-name { display: none; }
+#player-name { 
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  background: white; }
 
 #set-player-name {   
     position: relative;
@@ -109,6 +143,23 @@ body {
 }
 #events li { padding: 5px 10px; }
 #events li:nth-child(odd) { background: #eee; } 
+
+
+#debug {
+  position: absolute;
+  bottom: 60px;
+}
+#debug button {
+    font-size: 16px;
+    background: rgb(210,211,211);
+    border: none; 
+    margin: 10px auto;
+    height: auto;
+    display: block;
+    width: 200px;
+    padding: 10px; }
+}
+
 
 .disable-actions {
     pointer-events: none;
