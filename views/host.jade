@@ -7,14 +7,14 @@ html
     ul#player-states
       li#total Total: 
         span(id="total-players")
-          != total_players
+          != game_state["total_players"]
       li#connected Connected: 
         span(id="connected-players") 0
       li#ready Ready: 
         span(id="ready-players") 0
       li#inGame In Game: 
         span(id="in-game")
-          = game_state["in-game"]
+          = game_state["in_game"]
     #game-table
 
     #send-state 

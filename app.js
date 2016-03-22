@@ -8,30 +8,14 @@ var io = require('socket.io')(http);
 var path = require('path');
 var sleep = require('sleep');
 
-var PLAYERS = {};
-var HOSTS = {};
+//var Players = {};
+//var Hosts = {};
 
-var ROOM = 'AAAA';
-var PORT = 3000;
-var NUM_PLAYERS = 1;
+var Room = 'AAAA';
+var ServerPort = 3000;
+var MaxPlayers = 1;
 
-var DECK = ['1_guard', '2_preist', '3_baron'];
-
-var STARTING_GAME_STATE = {
-    "in_game": false,
-    "round": 1,
-    "turn": 1,
-    "game_count": 1,
-    "game_over": false,
-    "winner": null,
-    "active_player": null,
-    "target_player": null,
-    "turn_phase": 0, // 0,draw 1,play 2,end
-    "players": {},
-    "deck": DECK
-};
-
-var GAME_STATE = STARTING_GAME_STATE;
+var Game = require('./game').new_game();
 
 // wildcard socket events
 var wildcard = require('socketio-wildcard')();
@@ -56,17 +40,15 @@ app.use(request_logger);
 
 app.get('/host', function(req, res) {
     res.render('host', {
-        room: ROOM,
-        title: 'host:' + ROOM,
-        total_players: NUM_PLAYERS,
-        game_state: GAME_STATE
+        room: Room,
+        game_state: Game
     });
 });
 
 app.get('/player', function(req, res) {
     res.render('player', {
-        room: ROOM,
-        title: 'player: ' + ROOM
+        Room: Room,
+        title: 'player: ' + Room
     });
 });
 
@@ -80,30 +62,33 @@ app.get('/', function(req, res) {
 
 io.on('connection', function(socket) {
 
+    var client = null;
+
     var event_stream = function(msg) {
         if (!isEmptyObject(msg)) {
-            socket.broadcast.to(ROOM).emit('event', msg);
+            socket.broadcast.to(Room).emit('event', msg);
         }
     };
 
     var broadcast_player_list = function() {
         event_stream({
             "source": 'server',
-            "player-list": PLAYERS
+            "player-list": Players
         });
 
-        socket.broadcast.to(ROOM).emit('player-list', PLAYERS);
+        socket.broadcast.to(Room).emit('player-list', Players);
     };
 
-    var broadcast_game_state = function() {
+    var broadcast_Game = function() {
         event_stream({
             "source": 'server',
-            "game-state": GAME_STATE
+            "game-state": Game
         })
 
-        io.in(ROOM).emit('game-state', GAME_STATE);
+        io.in(Room).emit('game-state', Game);
     };
 
+    // Watch for all events for event stream
     socket.on('*', function(msg) {
         event_stream({
             "source": 'event',
@@ -111,82 +96,130 @@ io.on('connection', function(socket) {
         });
     });
 
-    // when the client emits 'addplayer', this listens and executes
-    socket.on('addplayer', function(playername, callback) {
-        var msg = add_player(playername, socket);
-        event_stream(msg);
+    // Register a GUID for each client, for safe reconnect
+    //
+    socket.on('register', function(data) {
+        // A GUID was sent from client
+        if (data !== null) {
+            console.log("Handling 'register'");
 
-        broadcast_player_list();
+            if (data.hasOwnProperty("clientUniqueID") &&
+                data.hasOwnProperty("clientType")) {
 
-        callback(true);
-        return false;
+                // If client has a UUID
+                var uid = data.clientUniqueID;
+                var clientType = data.clientType;
 
+                console.log("Registering uid:", uid, " as type:", clientType)
+                console.log(Game.Clients);
+                Game.Clients.addClient(uid, clientType);
+                if (!Game.Clients.getByUID(uid)) {
+                    Game.Clients.add(uid, clientType);
+                }
+                Game.Clients.setConnected(uid);
+                // switch (clientType) {
+                //     case "listener":
+                //         console.log("Registering listener:", uid);
+                //         if (!Game.Listeners.getByID(uid)) {
+                //             Game.Listeners.add(uid);
+                //         }
+                //         Game.Listeners.setConnected(uid);
+                //         break;
+                //     case "host":
+                //         console.log("Registering host:", uid);
+                //         if (!Game.Hosts.getByID(uid)) {
+                //             Game.Hosts.add(uid);
+                //         }
+                //         Game.Hosts.setConnected(uid);
+                //         break;
+                //     case "player":
+                //         console.log("Registering player:", uid);
+                //         if (!Game.Players.getByID(uid)) {
+                //             Game.Players.add(uid);
+                //         }
+                //         Game.Players.setConnected(uid,socket.id);
+                //     default:
+                //         break;
+                //  }
+            }
+        }
     });
 
-    // when the client emits 'addhost', this listens and executes
-    socket.on('addhost', function(callback) {
-        HOSTS[socket.id] = socket.id;
-
-        socket.room = ROOM;
-        socket.join(ROOM);
-
-        event_stream({
-            "source": 'host',
-            "connect": socket.id
-        });
-
-        broadcast_player_list();
-
-        callback(PLAYERS);
-    });
-
-    // Join for connected event listners
-    socket.on('addlistener', function(callback) {
-
-        socket.room = ROOM;
-        socket.join(ROOM);
-
-        // echo to room that a person has connected to their room
-        event_stream({
-            "source": 'event_listener',
-            "event": socket.id + ' connected.'
-        });
-
-        callback(true);
-    });
 
     // Client disconnect
     socket.on('disconnect', function() {
-        if (PLAYERS[socket.username]) {
+        //client = Game.
+        if(Game.Clients[socket.username]) {
             // remove player
             var msg = remove_player(socket);
             event_stream(msg);
 
             broadcast_player_list();
-            //broadcast_game_state();
+            //broadcast_Game();
         }
 
-        if (HOSTS[socket.id]) {
+        if (Game.Clients[socket.id]) {
             //remove host
             event_stream({
                 "source": 'socket',
-                "event": 'remove host: ' + HOSTS[socket.id]
+                "event": 'remove host: ' + Hosts[socket.id]
             });
 
-            delete HOSTS[socket.id];
+            delete Hosts[socket.id];
         }
     });
+
+
+    // when the client emits 'addplayer', this listens and executes
+    // socket.on('addplayer', function(playername, callback) {
+    //     var msg = add_player(playername, socket);
+    //     event_stream(msg);
+    //     broadcast_player_list();
+    //     callback(true);
+    //     return false;
+    // });
+
+    // when the client emits 'addhost', this listens and executes
+    // socket.on('addhost', function(callback) {
+    //     Hosts[socket.id] = socket.id;
+
+    //     socket.Room = Room;
+    //     socket.join(Room);
+
+    //     event_stream({
+    //         "source": 'host',
+    //         "connect": socket.id
+    //     });
+
+    //     //broadcast_player_list();
+    //     callback(Players);
+    // });
+
+    // Join for connected event listners
+    // socket.on('addlistener', function(callback) {
+
+    //     socket.Room = Room;
+    //     socket.join(Room);
+
+    //     // echo to Room that a person has connected to their Room
+    //     event_stream({
+    //         "source": 'event_listener',
+    //         "event": socket.id + ' connected.'
+    //     });
+
+    //     callback(true);
+    // });
 
     // Player Events
     //
     socket.on('player-ready', function(callback) {
-        // echo to room that a person has connected to their room
+        // echo to Room that a person has connected to their Room
         console.log(socket.username + ' ready.');
         event_stream({
             "source": 'player',
             "event": socket.username + ' ready.'
         });
-        PLAYERS[socket.username].ready = true;
+        Players[socket.username].ready = true;
         broadcast_player_list();
 
         callback(true);
@@ -199,37 +232,37 @@ io.on('connection', function(socket) {
         console.log('Handling: start-game');
         start_game();
         console.log('Broadcasting: game-state');
-        broadcast_game_state();
+        broadcast_Game();
     });
 
 
     // Game Events : End the game
 
     socket.on('end-game', function(callback) {
-        if (GAME_STATE["in_game"] === true) {
-            GAME_STATE["in_game"] = false;
+        if (Game["in_game"] === true) {
+            Game["in_game"] = false;
             console.log("Game Ending");
         } else {
             console.log("No game to end.");
         }
-        broadcast_game_state();
+        broadcast_Game();
     });
 
     socket.on('draw-card', function() {
-        if (GAME_STATE["in_game"] === true) {
+        if (Game["in_game"] === true) {
 
             var player_name = socket.username;
 
-            if (GAME_STATE["active_player"] === player_name) {
+            if (Game["active_player"] === player_name) {
                 // draw a card.
-                GAME_STATE["players"][player_name] =
-                    draw_card(GAME_STATE["players"][player_name]);
+                Game["Players"][player_name] =
+                    draw_card(Game["Players"][player_name]);
 
                 // Change turn phase
-                GAME_STATE["turn_phase"] = 1;
+                Game["turn_phase"] = 1;
 
                 // update your state to everyone.
-                broadcast_game_state();
+                broadcast_Game();
             }
         }
 
@@ -237,7 +270,9 @@ io.on('connection', function(socket) {
 
     socket.on('play-card', function(card, callback) {
         console.log(card, callback)
-        callback({"success" : true});
+        callback({
+            "success": true
+        });
     });
 
     // Debugging Functions
@@ -245,7 +280,7 @@ io.on('connection', function(socket) {
     // Send game state
     socket.on('send-state', function(callback) {
         console.log("send state event");
-        broadcast_game_state();
+        broadcast_Game();
     });
 
 
@@ -269,19 +304,19 @@ var add_player = function(playername, socket) {
     };
 
     // set the player name
-    PLAYERS[player.name] = player;
+    Players[player.name] = player;
     socket.username = player.name;
 
-    // join the room channel
-    socket.room = ROOM;
-    socket.join(ROOM);
+    // join the Room channel
+    socket.Room = Room;
+    socket.join(Room);
 }
 
 var remove_player = function(socket) {
-    delete PLAYERS[socket.username];
+    delete Players[socket.username];
     var msg = {
         "source": 'socket',
-        "event": 'remove player: ' + PLAYERS[socket.username]
+        "event": 'remove player: ' + Players[socket.username]
     };
     return msg;
 }
@@ -290,22 +325,22 @@ var remove_player = function(socket) {
 // Game Event Handlers
 
 var start_game = function(socket) {
-    if (GAME_STATE["in_game"] === false) {
+    if (Game["in_game"] === false) {
 
-        // Push list of player names into GAME_STATE.
+        // Push list of player names into Game.
         io.sockets.sockets.map(function(e) {
             if (e.hasOwnProperty('username')) {
                 var new_player_state = player_init(e.username);
                 console.log("Adding player: ", e.username);
-                GAME_STATE['players'][e.username] = new_player_state;
+                Game['Players'][e.username] = new_player_state;
             }
         })
 
-        GAME_STATE["in_game"] = true;
-        GAME_STATE["active_player"] = Object.keys(GAME_STATE["players"])[0];
-        GAME_STATE["round"] = 1
+        Game["in_game"] = true;
+        Game["active_player"] = Object.keys(Game["Players"])[0];
+        Game["round"] = 1
 
-        console.log("Starting Game: ", GAME_STATE);
+        console.log("Starting Game: ", Game);
         return true;
     }
     return false
@@ -320,18 +355,19 @@ var player_init = function(username) {
 }
 
 var draw_card = function(player) {
-    if (DECK.length > 0) {
+    if (Deck.length > 0) {
         if (player["hand"].length < 2) {
-            player["hand"].push(DECK.pop());
+            player["hand"].push(Deck.pop());
         }
     }
     return player;
 }
 
+
 //require('express-debug')(app);
 
-http.listen(PORT, function() {
-    console.log('listening on *:' + PORT);
+http.listen(ServerPort, function() {
+    console.log('listening on *:' + ServerPort);
 });
 
 

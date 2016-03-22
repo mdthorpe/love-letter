@@ -118,8 +118,20 @@ body {
     display: none;
  }
 
+@font_face {
+  font-family: 'Josefin Slab', serif;
+  src: url("fonts/Josefin_Slab.woff") format('woff');
+}
+
+@font_face {
+  src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url("fonts/Ubuntu_Mono.woff") format('woff2');
+  font-family: 'Ubuntu Mono', serif;
+}
+
+
 #player-ready button { 
     font-family: 'Josefin Slab', serif;
+    src: url("fonts/Josefin_Slab.woff") format('woff');
     font-size: 72px;
     width: 80%; 
     height: 144px;
@@ -130,6 +142,7 @@ body {
 
 #events { 
     font-family: 'Ubuntu Mono';
+    src: url("fonts/Ubuntu_Mono.woff") format('woff');
     font-size: 48px; 
     font-style: italic;
     padding: 3px; 

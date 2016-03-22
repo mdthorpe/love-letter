@@ -1,5 +1,7 @@
 "use strict";
 
+var ClientType = "host";
+
 var join_as_host = function() {
     /*jshint -W117 */
     socket.emit('addhost', function(players) {
@@ -104,7 +106,7 @@ socket.on('game-state', function(game_state) {
 });
 
 socket.on('player-list', function(players) {
-    console.log("player-list");
+    console.log("player-list", players);
     update_host_view(players);
     return false;
 });

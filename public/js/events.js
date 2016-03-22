@@ -1,5 +1,7 @@
 "use strict";
 
+var ClientType = "listener";
+
 var join_as_event_listener = function() {
   socket.emit('addlistener', function (connected){
     if(connected === true){

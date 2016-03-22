@@ -3,6 +3,8 @@
 var PLAYER_NAME = "";
 var HAND = [];
 
+var ClientType = "player"
+
 var add_player = function() {
     socket.emit('addplayer', $('#p').val(), function(connected) {
         if (connected === true) {
