@@ -11,16 +11,15 @@ html
               img(src= "img/0_back.png" class="card-img" onClick="play_card(this)")
     form#set-player-name
       h1 Your Name?
-      input#p(autocomplete='off', autofocus)
+      input#player-name-field(autocomplete='off', autofocus)
       button Set
     #player-ready
-      button(onMouseUp='set_ready()') Ready
-    // #debug
-    //  button(onMouseUp='draw_card()') Draw Card
-    //  button(onMouseUp='play_card(0)') Play Card 1
-    //  button(onMouseUp='play_card(1)') Play Card 2
-    #statusbar
-      ul#messages
+      button Ready?
+    #debug
+      button(onMouseUp='draw_card()') Draw Card
+      button(onMouseUp='play_card(0)') Play Card 1
+      button(onMouseUp='play_card(1)') Play Card 2
+    include ./includes/debug.jade
   include ./includes/scripts.jade
   script(src='js/player.js')
 

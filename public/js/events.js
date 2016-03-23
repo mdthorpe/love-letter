@@ -2,20 +2,9 @@
 
 var ClientType = "listener";
 
-var join_as_event_listener = function() {
-  socket.emit('addlistener', function (connected){
-    if(connected === true){
-        $("#events").prepend($('<li>')
-            .html("<b>--- Event Listener Ready ---</b>"));
-    }else
-        $("#events").prepend($('<li>')
-            .html("<b>--- Event Listener Failed to Connect ---</b>"));
-    });
-};
-
 var add_event = function(msg) {
     var txt = '';
-    var timestamp = moment().format("YYYY-MM-DD HH:MM:ss\.SSSZ");
+    var timestamp = moment().format("YYYY-MM-DD HH:MM:ss\.SSS");
     var source = 'unknown';
 
     if (msg.hasOwnProperty('timestamp')) {
@@ -30,12 +19,11 @@ var add_event = function(msg) {
 
     txt = '[' + timestamp + '] ' +
           '[' + source + '] ' +
-          JSON.stringify(msg);
+          JSON.stringify(msg, undefined, 1);
 
     $("#events").prepend($('<li>').text(txt));
 };
 
 $( document ).ready(function() {
-  join_as_event_listener(); 
   socket.on('event', add_event);
 });

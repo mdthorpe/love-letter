@@ -6,19 +6,17 @@ html
       !=room 
     ul#player-states
       li#total Total: 
-        span(id="total-players")
-          != game_state["total_players"]
+          = game_state.total_players
       li#connected Connected: 
         span(id="connected-players") 0
       li#ready Ready: 
         span(id="ready-players") 0
-      li#inGame In Game: 
-        span(id="in-game")
-          = game_state["in_game"]
+      li#inGame In Game:
+         = game_state.in_game
     #game-table
 
     #send-state 
-      button(onMouseUp='send_state()') Send State
+      button Send State
 
     #send-player-list 
       button(onMouseUp='send_players()') Send Player List
@@ -27,7 +25,6 @@ html
       button(onMouseUp='start_game()') Start Game
 
     ul#players
-    #statusbar
-      ul#messages
+    include ./includes/debug.jade
   include ./includes/scripts.jade
   script(src='js/host.js')

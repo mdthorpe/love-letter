@@ -1,47 +1,48 @@
 "use strict";
 
-var PLAYER_NAME = "";
-var HAND = [];
-
 var ClientType = "player"
 
-var add_player = function() {
-    socket.emit('addplayer', $('#p').val(), function(connected) {
+var playerName = sessionStorage.getItem('playerName');
+var playerReady = sessionStorage.getItem('playerReady');
+var playerInGame = sessionStorage.getItem('playerInGame');
+
+var set_player_name = function() {
+
+    socket.emit('set-player-name', clientUniqueID, playerName, function(connected) {
         if (connected === true) {
-            status_message("SYSTEM", "Host Ready");
-        } else
-            status_message("SYSTEM", "Host Failure");
-    });
-
-    $('#set-player-name').hide();
+            sessionStorage.setItem('playerName', playerName);
+            $('#set-player-name').hide();
+        }
+    })
+    $('#player-name').html(playerName).show();
     return false;
-};
-
-var show_player_name = function() {
-    PLAYER_NAME = $('#p').val()
-    $('#player-name').html(PLAYER_NAME).show();
-    return false;
-};
+}
 
 var ask_player_ready = function() {
     $('#player-ready').show();
     return false;
 };
 
-var set_ready = function() {
-    socket.emit('player-ready', function(callback) {
-        if (callback === true) {
+var set_player_ready = function() {
+    status_message("player/set_player_ready", "Trying to set ready")
+    socket.emit('set-player-ready', clientUniqueID, true, function(success) {
+        if (success === true) {
+
+            playerReady = true;
+            sessionStorage.setItem('playerReady', playerReady);
+
             status_message("player", "Player Ready");
-        } else
+
+            $('#player-name')
+                .addClass('player-is-ready');
+            $('#player-ready :button')
+                .addClass('disable-actions')
+                .text('Waiting..')
+
+        } else {
             status_message("player", "Failed to set Ready");
+        }
     });
-
-    $('#player-name')
-        .addClass('player-is-ready');
-    $('#player-ready :button')
-        .addClass('disable-actions')
-        .text('Waiting..');
-
     return false;
 };
 
@@ -51,10 +52,10 @@ var draw_card = function() {
 
 var play_card = function(c) {
     console.log("Playing card: ", HAND[c]);
-    $('#player-ready').show();
+    //$('#player-ready').show();
     // Tell the game server about it
     socket.emit('play-card', HAND[c], function(data) {
-        console.log("Got callback: ",data);
+        console.log("Got callback: ", data);
         $('#player-ready').hide();
         if (data['success'] === true) {
             status_message("player", "Played Card: " + HAND[c]);
@@ -76,7 +77,7 @@ var redraw_cards = function() {
     }
     // Blank second card if you only have one.
     //if (HAND.length < 2) {
-      //  cards = cards + '<li><img src="img/0_back.png" class="card-img"/></li>';
+    //  cards = cards + '<li><img src="img/0_back.png" class="card-img"/></li>';
     //}
     console.log(cards)
     $('#cards ul').html(cards);
@@ -121,13 +122,34 @@ var game_state_update = function(game_state) {
     }
 }
 
+
+// Called by main.js on register event
+//
+var restore_session = function() {
+    status_message("player/restore_session", "Trying to restore session")
+    if (playerName) {
+        set_player_name();
+        if (playerReady)
+            set_player_ready();
+    }
+
+    //ask_player_ready(); 
+    return false;
+}
+
+$('#player-ready :button').click(function () {
+    set_player_ready();
+});
+
 $('#set-player-name').submit(function() {
-    add_player();
-    show_player_name();
+
+    playerName = $('#player-name-field').val();
+    set_player_name();
+    console.log("set-player-name");
     ask_player_ready();
+
     return false;
 });
 
 
-/* $(window).load(function(){ $('#game-area').imagefit(); });*/
-2
+$(window).load(function() {});

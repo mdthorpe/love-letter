@@ -2,16 +2,16 @@
 
 var ClientType = "host";
 
-var join_as_host = function() {
-    /*jshint -W117 */
-    socket.emit('addhost', function(players) {
-        if (players) {
-            update_host_view(players);
-            status_message("SYSTEM", "Host Ready");
-        } else
-            status_message("SYSTEM", "Host Failure");
-    });
-};
+// var join_as_host = function() {
+//     /*jshint -W117 */
+//     socket.emit('addhost', function(players) {
+//         if (players) {
+//             update_host_view(players);
+//             status_message("SYSTEM", "Host Ready");
+//         } else
+//             status_message("SYSTEM", "Host Failure");
+//     });
+// };
 
 var update_player_list = function(players) {
     $("#players").html('');
@@ -26,7 +26,7 @@ var update_player_list = function(players) {
     }
 };
 
-var count_ready_players = function(players) {
+var count_ready_players = function() {
     var counter = 0;
     for (var p in this) {
         if (this[p].hasOwnProperty("ready") &&
@@ -35,10 +35,11 @@ var count_ready_players = function(players) {
     return counter;
 };
 
-var count_connected_players = function(players) {
+var count_connected_players = function() {
     var counter = 0;
     for (var p in this) {
-        if (this.hasOwnProperty(p))++counter;
+        if (this[p].hasOwnProperty("connected") &&
+            this[p].connected === true)++counter;
     }
     return counter;
 }
@@ -70,6 +71,9 @@ var update_host_view = function(players) {
     }
 }
 
+// Debug Commands
+
+
 var send_state = function() {
     socket.emit('send-state', function(callback) {
         if (callback === true) {
@@ -79,6 +83,11 @@ var send_state = function() {
     })
 }
 
+$("#send-state :button").click(function() {
+    send_state();
+})
+
+
 var send_players = function() {
     socket.emit('send-player-list', function(callback) {
         if (callback === true) {
@@ -87,6 +96,11 @@ var send_players = function() {
             status_message("send-player-list", "Player list failed");
     })
 }
+
+$("#send-players :button").click(function() {
+    send_players();
+})
+
 
 var start_game = function() {
     socket.emit('start-game', function(callback) {
@@ -100,18 +114,16 @@ var start_game = function() {
 //
 
 socket.on('game-state', function(game_state) {
-    status_message('HOST', 'Game State Event');
+    status_message('host/socket/game-state', 'Game State Event');
     update_game_state(game_state);
     return false;
 });
 
 socket.on('player-list', function(players) {
-    console.log("player-list", players);
+    status_message('host/socket/player-list', 'Received Player List');
     update_host_view(players);
     return false;
 });
 
 
-$(document).ready(function() {
-    join_as_host();
-});
+$(document).ready(function() {});

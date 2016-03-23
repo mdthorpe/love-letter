@@ -7,9 +7,10 @@ var socket = io();
 var clientUniqueID = "";
 
 // status_messages
-var status_message = function(player, msg) {
-    var txt = '<b>' + player + '</b>: ' + msg;
-    $("#messages").prepend($('<li>').html(txt));
+var status_message = function(source, msg) {
+    var timestamp = moment().format("HH:MM:ss\.SSS");
+    var txt = '[' + timestamp + '] ' + msg + '<div style="float:right; color: #999">' + source + '</div>';
+    $("#messages ul").prepend($('<li>').html(txt));
 };
 
 // ID functions
@@ -30,11 +31,11 @@ var generateUUID = function() {
 var registerConnection = function() {
     var uuid = sessionStorage.getItem('clientUniqueID')
     if (uuid) {
-        status_message('SYSTEM', 'Found clientUniqueID: ' + uuid);
+        status_message('main/registerConnection', 'Found clientUniqueID: ' + uuid);
     } else {
         uuid = generateUUID();
         sessionStorage.setItem('clientUniqueID', uuid)
-        status_message('SYSTEM', 'Registering clientUniqueID: ' + uuid);
+        status_message('main/registerConnection', 'Registering clientUniqueID: ' + uuid);
     }
     return uuid;
 }
@@ -43,31 +44,40 @@ socket.on('status-message', status_message);
 
 // Server States
 //
+
 socket.on('connect', function() {
-    status_message('SYSTEM', 'Socket Connected');
-    console.log("ClientType:", ClientType);
+    status_message('main/socket/connect', 'Socket Connected. Attempting to register.');
+
     clientUniqueID = registerConnection();
     if (clientUniqueID) {
-        console.log("Registering with game server", clientUniqueID);
-        socket.emit('register', {
+        var data = {
             "clientUniqueID": clientUniqueID,
             "clientType": ClientType
-        })
+        }
+
+        socket.emit('register', data, function(callback) {
+            if (callback === true) {
+                status_message('main/socket/connect', "Registered with game server as: " + clientUniqueID);
+                if (typeof(restore_session) === typeof(Function)) {
+                    restore_session();
+                }
+            }
+        });
     }
 });
 
 socket.on('disconnect', function() {
-    status_message('SYSTEM', 'disconnected, waiting for reconnect');
+    status_message('main/disconnet', 'disconnected, waiting for reconnect');
 });
 
 socket.on('reconnect', function() {
-    status_message('SYSTEM', 'connection ok');
+    status_message('main/reconnect', 'connection ok');
 });
 
 socket.on('reconnecting', function(nextRetry) {
-    status_message('SYSTEM', 'trying to reconnect. nextRetry: ' + nextRetry);
+    status_message('main/reconnecting', 'trying to reconnect. nextRetry: ' + nextRetry);
 });
 
 socket.on('reconnect_failed', function() {
-    status_message('SYSTEM', "Reconnect failed");
+    status_message('main/reconnect_failed', "Reconnect failed");
 });

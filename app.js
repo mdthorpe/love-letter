@@ -4,6 +4,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var moment = require('moment')
 
 var path = require('path');
 var sleep = require('sleep');
@@ -13,9 +14,9 @@ var sleep = require('sleep');
 
 var Room = 'AAAA';
 var ServerPort = 3000;
-var MaxPlayers = 1;
+var MaxPlayers = 2;
 
-var Game = require('./game').new_game();
+var Game = require('./game').newGame(MaxPlayers);
 
 // wildcard socket events
 var wildcard = require('socketio-wildcard')();
@@ -41,7 +42,7 @@ app.use(request_logger);
 app.get('/host', function(req, res) {
     res.render('host', {
         room: Room,
-        game_state: Game
+        game_state: Game.gameState,
     });
 });
 
@@ -66,20 +67,26 @@ io.on('connection', function(socket) {
 
     var event_stream = function(msg) {
         if (!isEmptyObject(msg)) {
-            socket.broadcast.to(Room).emit('event', msg);
+            if (msg.source) {
+                //msg.ts = moment().format("HH:MM:ss\.SSS");
+                socket.broadcast.to(Room).emit('event', msg);
+                console.log(JSON.stringify(msg))
+            }
         }
     };
 
     var broadcast_player_list = function() {
+        var playerList = Game.Clients.getByType('player');
         event_stream({
             "source": 'server',
-            "player-list": Players
+            "player-list": Game.Clients.getByType('player')
         });
 
-        socket.broadcast.to(Room).emit('player-list', Players);
+        io.in(Room).emit('player-list', playerList);
+        //socket.broadcast.to(Room).emit('player-list', playerList);
     };
 
-    var broadcast_Game = function() {
+    var broadcast_game = function() {
         event_stream({
             "source": 'server',
             "game-state": Game
@@ -91,135 +98,94 @@ io.on('connection', function(socket) {
     // Watch for all events for event stream
     socket.on('*', function(msg) {
         event_stream({
-            "source": 'event',
+            "source": undefined,
             "recieved": msg
         });
     });
 
-    // Register a GUID for each client, for safe reconnect
+    // Register a GUid for each client, for safe reconnect
     //
-    socket.on('register', function(data) {
-        // A GUID was sent from client
+    //socket.on('register', function(data) {
+    socket.on('register', function(data, callback) {
+        // A GUid was sent from client
         if (data !== null) {
-            console.log("Handling 'register'");
-
             if (data.hasOwnProperty("clientUniqueID") &&
                 data.hasOwnProperty("clientType")) {
 
-                // If client has a UUID
+                // If client has a UUid
                 var uid = data.clientUniqueID;
                 var clientType = data.clientType;
 
-                console.log("Registering uid:", uid, " as type:", clientType)
-                console.log(Game.Clients);
-                Game.Clients.addClient(uid, clientType);
-                if (!Game.Clients.getByUID(uid)) {
-                    Game.Clients.add(uid, clientType);
+                // If the client has never registered
+                if (!Game.Clients.getByUid(uid)) {
+                    Game.Clients.addClient(uid, clientType);
                 }
-                Game.Clients.setConnected(uid);
-                // switch (clientType) {
-                //     case "listener":
-                //         console.log("Registering listener:", uid);
-                //         if (!Game.Listeners.getByID(uid)) {
-                //             Game.Listeners.add(uid);
-                //         }
-                //         Game.Listeners.setConnected(uid);
-                //         break;
-                //     case "host":
-                //         console.log("Registering host:", uid);
-                //         if (!Game.Hosts.getByID(uid)) {
-                //             Game.Hosts.add(uid);
-                //         }
-                //         Game.Hosts.setConnected(uid);
-                //         break;
-                //     case "player":
-                //         console.log("Registering player:", uid);
-                //         if (!Game.Players.getByID(uid)) {
-                //             Game.Players.add(uid);
-                //         }
-                //         Game.Players.setConnected(uid,socket.id);
-                //     default:
-                //         break;
-                //  }
+
+                Game.Clients.setConnected(uid, socket.id);
+                if (clientType === "player") {
+                    broadcast_player_list();
+                }
+
+                socket.Room = Room;
+                socket.join(Room);
+
+                event_stream({
+                    "source": "app/socket/register",
+                    "register": uid,
+                    "clientType": clientType
+                });
             }
+            callback(true);
         }
     });
 
 
     // Client disconnect
-    socket.on('disconnect', function() {
-        //client = Game.
-        if(Game.Clients[socket.username]) {
-            // remove player
-            var msg = remove_player(socket);
-            event_stream(msg);
+    socket.on('disconnect', function(data) {
+        var client = Game.Clients.getBySocketId(socket.id)
 
-            broadcast_player_list();
-            //broadcast_Game();
+        event_stream({
+            "source": "app/socket/disconnect",
+            "client": client,
+        });
+
+        if (client) {
+            Game.Clients.setDisconnected(client.uid);
+            if (client.clientType === "player") {
+                broadcast_player_list();
+            }
         }
 
-        if (Game.Clients[socket.id]) {
-            //remove host
-            event_stream({
-                "source": 'socket',
-                "event": 'remove host: ' + Hosts[socket.id]
-            });
-
-            delete Hosts[socket.id];
-        }
     });
-
-
-    // when the client emits 'addplayer', this listens and executes
-    // socket.on('addplayer', function(playername, callback) {
-    //     var msg = add_player(playername, socket);
-    //     event_stream(msg);
-    //     broadcast_player_list();
-    //     callback(true);
-    //     return false;
-    // });
-
-    // when the client emits 'addhost', this listens and executes
-    // socket.on('addhost', function(callback) {
-    //     Hosts[socket.id] = socket.id;
-
-    //     socket.Room = Room;
-    //     socket.join(Room);
-
-    //     event_stream({
-    //         "source": 'host',
-    //         "connect": socket.id
-    //     });
-
-    //     //broadcast_player_list();
-    //     callback(Players);
-    // });
-
-    // Join for connected event listners
-    // socket.on('addlistener', function(callback) {
-
-    //     socket.Room = Room;
-    //     socket.join(Room);
-
-    //     // echo to Room that a person has connected to their Room
-    //     event_stream({
-    //         "source": 'event_listener',
-    //         "event": socket.id + ' connected.'
-    //     });
-
-    //     callback(true);
-    // });
 
     // Player Events
     //
-    socket.on('player-ready', function(callback) {
-        // echo to Room that a person has connected to their Room
-        console.log(socket.username + ' ready.');
+
+    // when the client emits 'addplayer', this listens and executes
+    socket.on('set-player-name', function(uid, playerName, callback) {
+
+        // set the player name
+        Game.Clients.updateByUid(uid, "playerName", playerName);
+
         event_stream({
-            "source": 'player',
-            "event": socket.username + ' ready.'
+            "source": "app/socket/set-player-name",
+            "event": playerName
+        })
+
+        broadcast_player_list()
+
+        callback(true);
+
+    });
+
+    socket.on('set-player-ready', function(uid, isReady, callback) {
+        event_stream({
+            "source": 'app/socket/player-ready',
+            "event": uid
         });
-        Players[socket.username].ready = true;
+
+        Game.Clients.updateByUid(uid, "playerReady", isReady);
+
         broadcast_player_list();
 
         callback(true);
@@ -230,9 +196,12 @@ io.on('connection', function(socket) {
 
     socket.on('start-game', function(callback) {
         console.log('Handling: start-game');
+        event_stream({
+            "source": 'app/socket/start-game',
+            "event": 'Starting Game'
+        })
         start_game();
-        console.log('Broadcasting: game-state');
-        broadcast_Game();
+        broadcast_game();
     });
 
 
@@ -245,7 +214,7 @@ io.on('connection', function(socket) {
         } else {
             console.log("No game to end.");
         }
-        broadcast_Game();
+        broadcast_game();
     });
 
     socket.on('draw-card', function() {
@@ -262,7 +231,7 @@ io.on('connection', function(socket) {
                 Game["turn_phase"] = 1;
 
                 // update your state to everyone.
-                broadcast_Game();
+                broadcast_game();
             }
         }
 
@@ -280,7 +249,7 @@ io.on('connection', function(socket) {
     // Send game state
     socket.on('send-state', function(callback) {
         console.log("send state event");
-        broadcast_Game();
+        broadcast_game();
     });
 
 
@@ -297,19 +266,9 @@ io.on('connection', function(socket) {
 // Player Event Handlers
 
 var add_player = function(playername, socket) {
-    var player = {
-        "name": playername,
-        "connected": true,
-        "ready": false
-    };
 
     // set the player name
-    Players[player.name] = player;
-    socket.username = player.name;
-
-    // join the Room channel
-    socket.Room = Room;
-    socket.join(Room);
+    Game.Clients[uid].player_name = player;
 }
 
 var remove_player = function(socket) {

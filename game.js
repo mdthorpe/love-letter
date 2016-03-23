@@ -10,8 +10,8 @@ var Deck = require('./deck');
 var Clients = require('./clients');
 exports.Clients = Clients;
 
-var game_state = {
-    "total_players": 1,
+var gameState = {
+    "total_players": 0,
     "in_game": false,
     "round": 1,
     "turn": 1,
@@ -20,14 +20,18 @@ var game_state = {
     "winner": null,
     "active_player": null,
     "turn_phase": 0, // 0,draw 1,play 2,end
-};
-
-exports.nextRound = function() {
-    game_state.round++;
 }
+exports.gameState = gameState;
 
-exports.new_game = function(total_players) {
-    game_state.deck = Deck;
-    game_state.total_players = total_players;
+var nextRound = function() {
+    gameState.round++;
+}
+exports.nextRound = nextRound;
+
+var newGame = function(total_players) {
+    total_players = total_players || 1;
+    gameState.deck = Deck;
+    gameState.total_players = total_players;
     return this;
 };
+exports.newGame = newGame;

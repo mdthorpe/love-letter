@@ -1,15 +1,16 @@
 var Clients = {}
-
-var updateByUID = function(uid, prop, val) {
-    Clients[uid][prop] = val;
-    return true;
-}
+exports.Clients;
 
 exports.init = function(init) {
     return self;
 }
 
-exports.getByUID = function(uid) {
+exports.updateByUid = function(uid, prop, val) {
+    Clients[uid][prop] = val;
+    return true;
+}
+
+exports.getByUid = function(uid) {
     if (Clients[uid]) {
         return Clients[uid]
     } else {
@@ -17,10 +18,24 @@ exports.getByUID = function(uid) {
     }
 }
 
-exports.getBySocketId = function(socket_id) {
+exports.getByType = function(t) {
+	var r = {};
     for (c in Clients) {
-        if (Clients[c].hasOwnProperty('socket_id')) {
+        if (Clients[c].hasOwnProperty('clientType')) {
+        	if (Clients[c].clientType == t){
+        		r[c] = Clients[c];
+        	}
+        }
+    }
+    return r;
+}
 
+exports.getBySocketId = function(socketId) {
+    for (c in Clients) {
+        if (Clients[c].hasOwnProperty('socketId')) {
+        	if (Clients[c].socketId === socketId){
+	        	return Clients[c]
+	        }
         }
     }
     return false;
@@ -31,19 +46,20 @@ exports.addClient = function(uid, clientType) {
         return Clients[uid]
     } else {
         Clients[uid] = {
-        	"client_type" : clientType,
+        	"uid": uid,
+        	"clientType" : clientType,
             "connected": false
         }
     }
     return false
 }
 
-exports.setConnected = function(uid, socket_id) {
+exports.setConnected = function(uid, socketId) {
     Clients[uid].connected = true;
-    Clients[uid].socket_id = socket_id;
+    Clients[uid].socketId = socketId;
 }
 
 exports.setDisconnected = function(uid) {
     Clients[uid].connected = false;
-    Clients[uid].socket_id = null;
+    Clients[uid].socketId = undefined;
 }
