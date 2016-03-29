@@ -1,25 +1,35 @@
 doctype html5
 html
   include ./includes/head.jade
+  link(href='/css/player.css', rel='stylesheet')
   body
-    #player-name
-    #game-area
-      #hand
-        #cards
-          ul
-            li 
-              img(src= "img/0_back.png" class="card-img" onClick="play_card(this)")
-    form#set-player-name
-      h1 Your Name?
-      input#player-name-field(autocomplete='off', autofocus)
-      button Set
-    #player-ready
-      button Ready?
-    #debug
-      button(onMouseUp='draw_card()') Draw Card
-      button(onMouseUp='play_card(0)') Play Card 1
-      button(onMouseUp='play_card(1)') Play Card 2
-    include ./includes/debug.jade
+    #player-name.player-name
+      h1 Name
+    .player-info Player Info
+    .frameT
+      .frameTC
+        .content 
+          .container
+            .redbox.box
+            .bluebox.box
+     
+    //-       .cards
+    //-           img.card.top-card(src= "img/1_guard.png")
+    //-           img.card.bottom-card(src= "img/0_back.png")
+    //- form#set-player-name
+    //-   h1 Your Name?
+    //-   input#player-name-field(autocomplete='off', autofocus)
+    //-   button Set
+    //- #player-ready
+    //-   button Ready?
+    //- ul#player-debug
+    //-   li 
+    //-     button(onMouseUp='draw_card()') Draw Card
+    //-   li 
+    //-     button(onMouseUp='play_card(0)') Play Card 1
+    //-   li 
+    //-     button(onMouseUp='play_card(1)') Play Card 2
+     include ./includes/status_messages.jade
   include ./includes/scripts.jade
   script(src='js/player.js')
 

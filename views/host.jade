@@ -1,30 +1,39 @@
 doctype html5
 html
   include ./includes/head.jade
+  link(href='/css/host.css', rel='stylesheet')
   body
-    #room-name Room: 
-      !=room 
-    ul#player-states
-      li#total Total: 
-          = game_state.total_players
-      li#connected Connected: 
-        span(id="connected-players") 0
-      li#ready Ready: 
-        span(id="ready-players") 0
-      li#inGame In Game:
-         = game_state.in_game
-    #game-table
-
-    #send-state 
-      button Send State
-
-    #send-player-list 
-      button(onMouseUp='send_players()') Send Player List
-
-    #start-game
-      button(onMouseUp='start_game()') Start Game
-
-    ul#players
-    include ./includes/debug.jade
+    //- .room-name Room: 
+    //-   !=room 
+    //-   ul.player-states
+    //-   li Total: 
+    //-       = game_state.total_players
+    //-   li Connected: 
+    //-     span#connected-players
+    //-   li Ready: 
+    //-     span#ready-players 0
+    //-   li In Game:
+    //-      = game_state.in_game
+    //- .logo
+    //-   img(src='/img/love-letter-logo.jpg')
+    .group
+      .left 
+        h1 Players
+        .players
+          ul#players
+      .right 
+        //- img(src='http://lorempixel.com/480/640/')
+        h1 Cards
+        .cards
+          img.card(src= "img/0_back.png")
+    //- ul.host-debug
+    //-   li 
+    //-     button#debug-start-game Start Game
+    //-   li
+    //-     button#debug-send-state Send State
+    //-   li
+    //-   button#debug-send-players Player List
+    
+    include ./includes/status_messages.jade
   include ./includes/scripts.jade
   script(src='js/host.js')
