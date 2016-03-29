@@ -11,10 +11,10 @@ var set_player_name = function() {
     socket.emit('set-player-name', clientUniqueID, playerName, function(connected) {
         if (connected === true) {
             sessionStorage.setItem('playerName', playerName);
-            $('#set-player-name').hide();
+            $('.ask-player-name').hide();
         }
     })
-    $('#player-name').html(playerName).show();
+    $('.player-name').html(playerName).fadeIn('slow');
     return false;
 }
 
@@ -33,7 +33,7 @@ var set_player_ready = function() {
 
             status_message("player", "Player Ready");
 
-            $('#player-name')
+            $('.player-name')
                 .addClass('player-is-ready');
             $('#player-ready :button')
                 .addClass('disable-actions')
@@ -71,16 +71,7 @@ var play_card = function(c) {
 
 var redraw_cards = function() {
     console.log("Redrawing..")
-    var cards = "";
-    for (var c in HAND) {
-        cards = cards + '<li><img src="img/' + HAND[c] + '.png" class="card-img" onClick="play_card(' + c + ')"/></li>';
-    }
-    // Blank second card if you only have one.
-    //if (HAND.length < 2) {
-    //  cards = cards + '<li><img src="img/0_back.png" class="card-img"/></li>';
-    //}
-    console.log(cards)
-    $('#cards ul').html(cards);
+    
 }
 
 socket.on('game-state', function(game_state) {
@@ -132,20 +123,55 @@ var restore_session = function() {
         if (playerReady)
             set_player_ready();
     } else {
-        $('#set-player-name').show();
+        $('.ask-player-name').show();
     }
 
     //ask_player_ready(); 
     return false;
 }
 
+var clear_settings = function () {
+    status_message("player/clear_settings", "Clearing local settings");
+    sessionStorage.removeItem("playerName");
+    sessionStorage.removeItem("playerReady");
+    sessionStorage.removeItem("playerInGame");
+    $(".ask-player-name").show();
+    $(".player-name").hide();
+}
+
+var clear_uid = function () {
+    status_message("player/clear_uid", "Clearing UID");
+    localStorage.removeItem("clientUniqueID");
+}
+
+var toggle_cards = function () {
+    $(".cards").toggle()
+}
+
+var toggle_ask = function () {
+    $(".ask-player-name").toggle()
+}
+
+var flip_cards = function () {
+    // store background images
+    $(".card-one")
+        .toggleClass("top-card")
+        .toggleClass("bottom-card");
+    $(".card-two")
+        .toggleClass("top-card")
+        .toggleClass("bottom-card");
+}
+
+// buttons
+
 $('#player-ready :button').click(function () {
     set_player_ready();
 });
 
-$('#set-player-name').submit(function() {
+// forms
 
-    playerName = $('#player-name-field').val();
+$('.ask-player-name').submit(function() {
+    playerName = $(".ask-player-name input").val()
     set_player_name();
     console.log("set-player-name");
     ask_player_ready();

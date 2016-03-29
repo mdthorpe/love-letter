@@ -1,8 +1,9 @@
 doctype html5
 html
     include ./includes/head.jade
+    link(href='/css/events.css', rel='stylesheet')
     body
-        ul#events
+        .events
         include ./includes/scripts.jade
-    include ./includes/debug.jade
+    include ./includes/status_messages.jade
     script(src='js/events.js')

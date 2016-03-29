@@ -21,7 +21,7 @@ var add_event = function(msg) {
           '[' + source + '] ' +
           JSON.stringify(msg, undefined, 1);
 
-    $("#events").prepend($('<li>').text(txt));
+    $(".events").prepend($('<li>').text(txt));
 };
 
 $( document ).ready(function() {
