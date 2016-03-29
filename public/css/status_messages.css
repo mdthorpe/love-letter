@@ -1,6 +1,6 @@
 .messages {
 	font-size: 2vh;
-	position: fixed;
+	position: absolute;
 	margin: 0;
 	bottom: 0;
 	border-top: 2px solid #888;
@@ -9,11 +9,15 @@
 	height: 12vh;
 	overflow: scroll;
 	font-style: normal;
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
-
 .message-source {
 	float: right;
 	color: #999
+}
+.messages {
 }
 .messages li {
 	background: #ddd;
