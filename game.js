@@ -1,11 +1,5 @@
-//var Listeners = require('./clients');
-//var Players = require('./clients');
-//var Hosts = require('./clients');
 var Deck = require('./deck');
 
-//exports.Listeners = Listeners;
-//exports.Players = Players;
-//exports.Hosts = Hosts;
 
 var Clients = require('./clients');
 exports.Clients = Clients;

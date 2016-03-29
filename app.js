@@ -82,6 +82,13 @@ io.on('connection', function(socket) {
             "player-list": Game.Clients.getByType('player')
         });
 
+        var hostList = Game.Clients.getByType('host');
+        event_stream({
+            "source": 'server',
+            "host-list": Game.Clients.getByType('host')
+        });
+        
+
         io.in(Room).emit('player-list', playerList);
         //socket.broadcast.to(Room).emit('player-list', playerList);
     };
@@ -123,7 +130,7 @@ io.on('connection', function(socket) {
 
                 Game.Clients.setConnected(uid, socket.id);
                 if (clientType === "player") {
-                    broadcast_player_list();
+                    //broadcast_player_list();
                 }
 
                 socket.Room = Room;
