@@ -1,6 +1,6 @@
 "use strict";
 
-var ClientType = "player"
+var clientType = "player"
 
 var playerName = sessionStorage.getItem('playerName');
 var playerReady = sessionStorage.getItem('playerReady');
@@ -131,6 +131,8 @@ var restore_session = function() {
         set_player_name();
         if (playerReady)
             set_player_ready();
+    } else {
+        $('#set-player-name').show();
     }
 
     //ask_player_ready(); 

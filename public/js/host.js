@@ -1,27 +1,18 @@
 "use strict";
 
-var ClientType = "host";
-
-// var join_as_host = function() {
-//     /*jshint -W117 */
-//     socket.emit('addhost', function(players) {
-//         if (players) {
-//             update_host_view(players);
-//             status_message("SYSTEM", "Host Ready");
-//         } else
-//             status_message("SYSTEM", "Host Failure");
-//     });
-// };
+var clientType = "host";
 
 var update_player_list = function(players) {
     $("#players").html('');
-    for (var player in players) {
-        if (players[player].ready) {
-            $("#players").append($('<li>')
-                .text(players[player].name).addClass('player-is-ready'));
+    for (var p in players) {
+        
+        var name = players[p]['playerName'];
+        $("#players").append($('<li>').text(name).addClass("player"));
+
+        if (players[p].playerReady === true) {
+            $("#players li:last").addClass('player-is-ready');
         } else {
-            $("#players").append($('<li>')
-                .text(players[player].name));
+            $("#players li:last").addClass('player-is-ready');
         }
     }
 };
@@ -64,7 +55,7 @@ var update_host_view = function(players) {
     update_player_list(players);
     update_connected(players);
     update_ready(players);
-    if (count_ready_players.call(players) ===
+    if (count_ready_players.call(players) === 
         parseInt($("#total-players").text())) {
         status_message('HOST', 'All players ready');
         socket.emit('start-game');
@@ -120,7 +111,7 @@ socket.on('game-state', function(game_state) {
 });
 
 socket.on('player-list', function(players) {
-    status_message('host/socket/player-list', 'Received Player List');
+    status_message('host/socket/player-list', 'Received Player List' + players);
     update_host_view(players);
     return false;
 });

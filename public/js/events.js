@@ -1,6 +1,6 @@
 "use strict";
 
-var ClientType = "listener";
+var clientType = "listener";
 
 var add_event = function(msg) {
     var txt = '';

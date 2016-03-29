@@ -9,8 +9,8 @@ var clientUniqueID = "";
 // status_messages
 var status_message = function(source, msg) {
     var timestamp = moment().format("HH:MM:ss\.SSS");
-    var txt = '[' + timestamp + '] ' + msg + '<div style="float:right; color: #999">' + source + '</div>';
-    $("#messages ul").prepend($('<li>').html(txt));
+    var txt = '[' + timestamp + '] ' + msg + '<div class="message-source">' + source + '</div>';
+    $("#messages-list").prepend($('<li>').html(txt));
 };
 
 // ID functions
@@ -52,7 +52,7 @@ socket.on('connect', function() {
     if (clientUniqueID) {
         var data = {
             "clientUniqueID": clientUniqueID,
-            "clientType": ClientType
+            "clientType": clientType
         }
 
         socket.emit('register', data, function(callback) {
@@ -63,6 +63,10 @@ socket.on('connect', function() {
                 }
             }
         });
+
+        if (clientType === "host"){
+        	socket.emit('send-player-list');
+        }
     }
 });
 
