@@ -1,0 +1,34 @@
+.messages {
+	font-size: 2vh;
+	position: fixed;
+	margin: 0;
+	bottom: 0;
+	border-top: 2px solid #888;
+	background: #eee;
+	width: 100%;
+	height: 12vh;
+	overflow: scroll;
+	font-style: normal;
+}
+
+.message-source {
+	float: right;
+	color: #999
+}
+.messages li {
+	background: #ddd;
+	padding: 3px;
+	list-style-type: none;
+	margin: 0;
+}
+.messages li {
+	color: #999;
+	padding: 5px 10px;
+	display: block;
+}
+.messages li:first-child {
+	color: black;
+}
+.messages li:nth-child(odd) {
+	background: #eee;
+}

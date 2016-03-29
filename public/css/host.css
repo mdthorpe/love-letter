@@ -1,0 +1,78 @@
+/* host.css */
+
+/*csslint empty-rules: false, important: false, size: false*/
+body {
+	font-family: 'Josefin Slab', serif;	/*font-size: 6vh;*/
+	margin: 0;
+	padding: 0;    /*box-sizing: border-box;*/
+}
+ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+li {
+	display: inline;
+	padding-right: 4px;
+}
+button {
+	font-size: 2vh;
+	background: rgb(210, 211, 211);
+	border: none;
+	height: auto;
+	width: 25vw;
+	height: 4vh;
+}
+.players {
+	width: 100%;
+}
+.players li {
+	font-size: 4vh;
+	display: block;
+	width: 90%;
+	background: #ddd;
+	margin-top: 2vh;
+	padding: 2vh;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border-radius: 0 8px 8px 0;
+}
+.player-is-ready {
+	background: #5c5;
+}
+.player-is-turn {
+	border: 5px solid #c5c;
+}
+.cards {
+	width: 100%;
+	margin: 1vw;
+}
+.card {
+	max-height: 70vh;
+
+}
+
+.left {
+	float: left;
+	width: 40%
+}
+.right {
+	float: right;
+	width: 60%
+}
+img {
+	max-width: 100%;
+	height: auto;
+}
+.group:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+@media screen and (max-width:480px) {
+	.left, .right {
+		float: none;
+		width: auto;
+	}
+}
