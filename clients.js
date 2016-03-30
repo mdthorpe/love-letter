@@ -1,6 +1,17 @@
 var Clients = {}
 exports.Clients;
 
+var isPlayer = function(uid) {
+    if (Clients[uid]) {
+        if (Clients[uid].hasOwnProperty('clientType')) {
+            if (Clients[uid].clientType === "player") {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 exports.init = function(init) {
     return self;
 }
@@ -19,12 +30,12 @@ exports.getByUid = function(uid) {
 }
 
 exports.getByType = function(t) {
-	var r = {};
+    var r = {};
     for (c in Clients) {
         if (Clients[c].hasOwnProperty('clientType')) {
-        	if (Clients[c].clientType == t){
-        		r[c] = Clients[c];
-        	}
+            if (Clients[c].clientType === t) {
+                r[c] = Clients[c];
+            }
         }
     }
     return r;
@@ -33,9 +44,9 @@ exports.getByType = function(t) {
 exports.getBySocketId = function(socketId) {
     for (c in Clients) {
         if (Clients[c].hasOwnProperty('socketId')) {
-        	if (Clients[c].socketId === socketId){
-	        	return Clients[c]
-	        }
+            if (Clients[c].socketId === socketId) {
+                return Clients[c]
+            }
         }
     }
     return false;
@@ -45,11 +56,26 @@ exports.addClient = function(uid, clientType) {
     if (uid in Clients) {
         return Clients[uid]
     } else {
-        Clients[uid] = {
-        	"uid": uid,
-        	"clientType" : clientType,
-            "connected": false
+        var newClient = {};
+
+        if (clientType === "player") {
+            var newClient = {
+                "uid": uid,
+                "clientType": clientType,
+                "connected": false,
+                "hand": [],
+                "active": false,
+                "winner": false,
+                "lost": false
+            }
+        } else {
+            var newClient = {
+                "uid": uid,
+                "clientType": clientType,
+                "connected": false
+            }
         }
+        Clients[uid] = newClient;
     }
     return false
 }
@@ -62,4 +88,19 @@ exports.setConnected = function(uid, socketId) {
 exports.setDisconnected = function(uid) {
     Clients[uid].connected = false;
     Clients[uid].socketId = undefined;
+}
+
+/// Player only functions.. is this crazy?
+exports.addCard = function(uid, card) {
+    if (isPlayer(uid)) {
+        Clients[uid].hand.push(card);
+        return true;
+    }
+    return false;
+}
+
+exports.getCards = function(uid) {
+    if (isPlayer(uid))
+        return Clients[uid].hand;
+    return false;
 }

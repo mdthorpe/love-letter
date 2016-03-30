@@ -1,4 +1,4 @@
-var Deck = require('./deck');
+var Deck = require('./deck').init();
 
 
 var Clients = require('./clients');
@@ -29,3 +29,8 @@ var newGame = function(total_players) {
     return this;
 };
 exports.newGame = newGame;
+
+var drawCard = function() {
+    return gameState.deck.pop();
+}
+exports.drawCard = drawCard;

@@ -42,7 +42,7 @@ function new_deck() {
     var deck = [];
     for (card in cards) {
         for (var i = 0; i < cards[card].count; i++) {
-            deck.push(cards[card]);
+            deck.push(cards[card]["name"]);
         }
     }
     return deck;
@@ -69,5 +69,5 @@ function shuffle(array) {
 exports.init = function(init) {
     var deck = new_deck()
     deck = shuffle(deck);
-    return this;
+    return deck;
 };

@@ -9,9 +9,6 @@ var moment = require('moment')
 var path = require('path');
 var sleep = require('sleep');
 
-//var Players = {};
-//var Hosts = {};
-
 var Room = 'AAAA';
 var ServerPort = 3000;
 var MaxPlayers = 2;
@@ -187,7 +184,7 @@ io.on('connection', function(socket) {
 
     socket.on('set-player-ready', function(uid, isReady, callback) {
         event_stream({
-            "source": 'app/socket/player-ready',
+            "source": 'app/socket/set-player-ready',
             "event": uid
         });
 
@@ -224,24 +221,19 @@ io.on('connection', function(socket) {
         broadcast_game();
     });
 
-    socket.on('draw-card', function() {
-        if (Game["in_game"] === true) {
+    socket.on('draw-card', function(uid, callback) {
+        event_stream({
+            "source": 'app/socket/draw-card',
+            "event": uid
+        });
 
-            var player_name = socket.username;
+        var card = Game.drawCard(uid);
+        Game.Clients.addCard(uid, card);
 
-            if (Game["active_player"] === player_name) {
-                // draw a card.
-                Game["Players"][player_name] =
-                    draw_card(Game["Players"][player_name]);
-
-                // Change turn phase
-                Game["turn_phase"] = 1;
-
-                // update your state to everyone.
-                broadcast_game();
-            }
-        }
-
+        callback({
+            "success": true,
+            "card" : card
+        });
     });
 
     socket.on('play-card', function(card, callback) {

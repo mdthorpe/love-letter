@@ -5,9 +5,6 @@ html
   body
     #player-name.player-name Not Set
     .player-info Player Info
-    //-       .container
-    //-         .redbox.box
-    //-         .bluebox.box
     .frameT
       .frameTC
         .content
@@ -16,11 +13,7 @@ html
             input(type='text', autocomplete='off', autofocus)
             button Set
           .cards.container
-            .card-two.bottom-card.box
-            .card-one.top-card.box
-          //- .cards
-          //-   img.card.top-card(src= "img/1_guard.png")
-          //-   img.card.bottom-card(src= "img/0_back.png")
+            .box.card(data-pos="middle",data-anim="none",data-face="back")
     //- #player-ready
     //-   button Ready?
     include ./includes/status_messages.jade
@@ -33,6 +26,7 @@ html
       button.debug-button(onMouseUp='toggle_cards()') toggle_cards
       button.debug-button(onMouseUp='toggle_ask()') toggle_ask
       button.debug-button(onMouseUp='flip_cards()') flip_cards
+      button.debug-button(onMouseUp='set_player_ready()') set_ready
     
   include ./includes/scripts.jade
   script(src='js/player.js')

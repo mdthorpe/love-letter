@@ -74,10 +74,6 @@ var send_state = function() {
     })
 }
 
-$("#send-state :button").click(function() {
-    send_state();
-})
-
 
 var send_players = function() {
     socket.emit('send-player-list', function(callback) {
@@ -88,10 +84,6 @@ var send_players = function() {
     })
 }
 
-$("#send-players :button").click(function() {
-    send_players();
-})
-
 
 var start_game = function() {
     socket.emit('start-game', function(callback) {
@@ -100,6 +92,16 @@ var start_game = function() {
         }
     })
 }
+
+
+$(".send-state").click(function() {
+    send_state();
+})
+
+
+$(".send-players").click(function() {
+    send_players();
+})
 
 // Host events
 //

@@ -8,7 +8,7 @@ body {
 	background-color: #376568;
 }
 
-div.frameT {
+.frameT {
 	width: 100%;
 	padding: 0;
 	display: table;
@@ -19,7 +19,7 @@ div.frameT {
 	margin: 0;
 }
 
-div.frameTC {
+.frameTC {
 	padding: 0;
 	vertical-align: middle;
 	display: table-cell;
@@ -27,7 +27,7 @@ div.frameTC {
 	z-index: 1;
 }
 
-div.content {
+.content {
 	width: 80vw;
 	margin: 0 auto;
 	text-align: left;
@@ -142,15 +142,40 @@ img {
 .princess { background-image: url('/img/8_princess.png'); }
 
 
-.top-card{
-  animation-name: bottomcard;
-  transform: translate(  4vh,  4vh) rotate(  0deg);  
+.card[data-pos="bottom"]{
+	transform: translate(  -4vh,  -4vh) rotate(  0deg);
+	z-index: 0;
 }
 
-.bottom-card{
-  animation-name: topcard;
-  transform: translate(  -4vh,  -4vh) rotate(  0deg); 
+.card[data-pos="top"] {
+	transform: translate(  4vh,  4vh) rotate(  0deg); 
+	z-index: 1; 
 }
+
+.card[data-pos="middle"] {
+	transform: translate(  0vh,  0vh) rotate(  0deg); 
+	z-index: 0; 
+}
+
+.card[data-pos="outtop"] {
+	transform: translate(  0vh,  -110vh) rotate(  0deg); 
+	z-index: 1; 
+}
+
+.card[data-anim="top"]{animation-name: bottomcard;}
+.card[data-anim="bottom"]{animation-name: topcard;}
+.card[data-anim="slidebottom"]{animation-name: slidebottom;}
+.card[data-anim="playcard"]{animation-name: playcard;}
+
+.card[data-face="back"]     {background-image: url('/img/0_back.png')}
+.card[data-face="guard"]    { background-image: url('/img/1_guard.png'); }
+.card[data-face="priest"]   { background-image: url('/img/2_priest.png'); }
+.card[data-face="baron"]    { background-image: url('/img/3_baron.png'); }
+.card[data-face="handmaid"] { background-image: url('/img/4_handmaid.png'); }
+.card[data-face="prince"]   { background-image: url('/img/5_prince.png'); }
+.card[data-face="king"]     { background-image: url('/img/6_king.png'); }
+.card[data-face="countess"] { background-image: url('/img/7_countess.png'); }
+.card[data-face="princess"] { background-image: url('/img/8_princess.png'); }
 
 @keyframes topcard {
     0% { transform: translate(  4vh,  4vh) rotateY(  0deg) rotateX(  0deg); z-index: 1}
@@ -168,4 +193,16 @@ img {
    55% { transform: translate(-22vh,  0px) rotateY( -45deg) rotateX( 10deg); z-index: 1}
    90% { transform: translate(   4vh,  4vh) rotateY(   0deg) rotateX(  0deg); z-index: 1}
   100% { transform: translate(   4vh,  4vh) rotateY(   0deg) rotateX(  0deg); z-index: 1}
+}
+
+@keyframes slidebottom {
+	0% { transform: translate(   0vh,  0vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
+  100% { transform: translate( -4vh,  -4vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
+}
+@keyframes playcard {
+  100% { transform: translate(  0vh,  -100vh) rotateY(   45deg) rotateX(  45deg)}
+}
+
+@keyframes drawcard {
+	0% { transform: translate(  0vh,  100vh) rotateY(   45deg) rotateX(  45deg)}
 }
