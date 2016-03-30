@@ -52,14 +52,16 @@ var set_player_ready = function() {
 
 var draw_card = function() {
     status_message("player/draw_card", "Drawing a card")
-    socket.emit('draw-card', clientUniqueID, function(callback) {
-        if (callback["success"] === true) {
-            status_message("player/set_player_ready", "Drew card: " + callback["card"]);
-            show_card(callback["card"]);
-        } else {
-            status_message("player/set_player_ready", "Failed to draw card");
-        }
-    });
+    if($(".card").length < 2){
+        socket.emit('draw-card', clientUniqueID, function(callback) {
+            if (callback["success"] === true) {
+                status_message("player/set_player_ready", "Drew card: " + callback["card"]);
+                show_card(callback["card"]);
+            } else {
+                status_message("player/set_player_ready", "Failed to draw card");
+            }
+        });
+    }
     return false;
 }
 
@@ -68,9 +70,25 @@ var play_card = function(c) {
 }
 
 var show_card = function(c) {
-    var d = card_div(c,"outtop");
-    console.log(d);
-    $(".cards").append(d);
+    if($(".card").length === 1){
+        var d = card_div(c,"outtop");
+        $(".cards").append(d);
+        $(".card[data-pos='middle']")
+            .attr('data-anim', 'slidebottom')
+            .attr('data-pos', 'to-bottom'); 
+        $(".card[data-pos='to-bottom']")
+            .attr('data-pos', 'bottom');
+        $(".card[data-pos='outtop']")
+            .attr('data-anim', 'drawcardToTop')
+            .attr('data-pos', 'top');
+    } else {
+        var d = card_div(c,"outtop");
+        $(".cards").append(d);
+        $(".card[data-pos='outtop']")
+            .attr('data-anim', 'drawcardToMiddle')
+            .attr('data-pos', 'middle');
+        console.log(d);
+    }
 }
 
 var render_hand = function() {
@@ -103,7 +121,6 @@ var render_hand = function() {
 
 var card_div = function(face, pos) {
     return '<div data-pos=' + pos 
-         + ' data-anim=' + "drawcard" 
          + ' data-face=' + face 
          + ' class="box card"></div>';
 }

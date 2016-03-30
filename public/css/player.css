@@ -158,14 +158,17 @@ img {
 }
 
 .card[data-pos="outtop"] {
-	transform: translate(  0vh,  -110vh) rotate(  0deg); 
+	transform: translate(  4vh,  -110vh) rotate(  0deg); 
 	z-index: 1; 
 }
 
 .card[data-anim="top"]{animation-name: bottomcard;}
 .card[data-anim="bottom"]{animation-name: topcard;}
 .card[data-anim="slidebottom"]{animation-name: slidebottom;}
+.card[data-anim="slidetop"]{animation-name: slidetop;}
 .card[data-anim="playcard"]{animation-name: playcard;}
+.card[data-anim="drawcardToTop"]{animation-name: drawcardToTop;}
+.card[data-anim="drawcardToMiddle"]{animation-name: drawcardToMiddle;}
 
 .card[data-face="back"]     {background-image: url('/img/0_back.png')}
 .card[data-face="guard"]    { background-image: url('/img/1_guard.png'); }
@@ -199,10 +202,21 @@ img {
 	0% { transform: translate(   0vh,  0vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
   100% { transform: translate( -4vh,  -4vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
 }
+
+@keyframes slidetop {
+	0% { transform: translate(   0vh,  0vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
+  100% { transform: translate(  4vh,   4vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
+}
+
 @keyframes playcard {
   100% { transform: translate(  0vh,  -100vh) rotateY(   45deg) rotateX(  45deg)}
 }
 
-@keyframes drawcard {
-	0% { transform: translate(  0vh,  100vh) rotateY(   45deg) rotateX(  45deg)}
+@keyframes drawcardToTop {
+	0% { transform: translate(  0vh,  -100vh) rotateY(   45deg) rotateX(  45deg)}
+  100% { transform: translate(  4vh,  4vh)    rotateY(   0deg)  rotateX(  0deg)}
+}
+@keyframes drawcardToMiddle {
+	0% { transform: translate(  0vh,  -100vh) rotateY(   45deg) rotateX(  45deg)}
+  100% { transform: translate(  0vh,  0vh)    rotateY(   0deg)  rotateX(  0deg)}
 }
