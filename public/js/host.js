@@ -9,23 +9,19 @@ var update_player_list = function(players) {
         
         var name = players[p]['playerName'];
         $("#players").append($('<li>').text(name).addClass("player"));
-
-        if (players[p].playerReady === true) {
-            $("#players li:last").attr('data-player-state','ready');
-        } else {
-            $("#players li:last").attr('data-player-state','notready');
-        }
+        $("#players li:last").attr('data-player-state','connected');
+        
     }
 };
 
-var count_ready_players = function() {
-    var counter = 0;
-    for (var p in this) {
-        if (this[p].hasOwnProperty("ready") &&
-            this[p].ready === true)++counter;
-    }
-    return counter;
-};
+// var count_ready_players = function() {
+//     var counter = 0;
+//     for (var p in this) {
+//         if (this[p].hasOwnProperty("ready") &&
+//             this[p].ready === true)++counter;
+//     }
+//     return counter;
+// };
 
 var count_connected_players = function() {
     var counter = 0;
@@ -36,9 +32,9 @@ var count_connected_players = function() {
     return counter;
 }
 
-var update_ready = function(players) {
-    $("#ready-players").text(count_ready_players.call(players));
-};
+// var update_ready = function(players) {
+//     $("#ready-players").text(count_ready_players.call(players));
+// };
 
 var update_connected = function(players) {
     $("#connected-players").text(count_connected_players.call(players));
@@ -55,12 +51,12 @@ var update_game_state = function(game_state) {
 var update_host_view = function(players) {
     update_player_list(players);
     update_connected(players);
-    update_ready(players);
-    if (count_ready_players.call(players) === 
-        parseInt($("#total-players").text())) {
-        status_message('HOST', 'All players ready');
-        socket.emit('start-game');
-    }
+    // update_ready(players);
+    // if (count_ready_players.call(players) === 
+    //     parseInt($("#total-players").text())) {
+    //     status_message('HOST', 'All players ready');
+    //     socket.emit('start-game');
+    // }
 }
 
 // Debug Commands
@@ -103,6 +99,11 @@ $(".send-state").click(function() {
 $(".send-players").click(function() {
     send_players();
 })
+
+$(".show played-card").click(function() {
+    console.log("Played this card:");
+})
+
 
 // Host events
 //
