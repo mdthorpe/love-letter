@@ -41,15 +41,28 @@ body {
 	text-align: center;
 	margin-top: 0vh;
 }
+
 input[type="text"] {
     font-size: 4vh;
 }
+
 button {
 	display: block;
 	margin: 1vh auto;
 	width: 50vw;
 	font-size: 4vh;
 }
+
+.ask-player-ready {
+	font-size: 5vh;
+	margin-top: 30vh;
+	width: 80vw;
+	min-height: 10vh;
+	border: 1px solid #333;
+	border-radius: 2vh;
+	display: none;
+}
+
 .card {
 	margin-left: auto;
 	margin-right: auto;	
@@ -71,6 +84,14 @@ button {
 	color: white;
 	background-color: #3E7D82;
 	display: none;
+}
+
+.message-banner-box {
+
+}
+
+.message-banner-message {
+
 }
 
 .debug {
@@ -203,4 +224,16 @@ button {
 @keyframes drawcardToMiddle {
 	0% { transform: translate(  0vh,  -110vh) rotateY(   0deg) rotateX(  -120deg)}
   100% { transform: translate(  0vh,  0vh)    rotateY(   0deg)  rotateX(  0deg)}
+}
+
+@keyframes hideBanner {
+    0% { transform: rotateX(   0deg)}
+   90% { transform: rotateX( -10deg)}
+  100% { transform: rotateX(  90deg)}
+}
+
+@keyframes showBanner {
+    0% { transform: rotateX(  90deg)}
+   90% { transform: rotateX( -10deg)}
+  100% { transform: rotateX(   0deg)}
 }
