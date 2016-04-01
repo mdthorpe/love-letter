@@ -81,17 +81,17 @@ button {
 	opacity: 0.9;
 }
 
-.player[data-player-state="notready"] {
+.player[data-player-state="nostate"] {
 	background: gray;
 	color: #444;
 }
-.player[data-player-state="ready"] {
+.player[data-player-state="connected"] {
 	background: #5c5;
-	border-right: 2vw solid;
-	border-color: red;
 }
 .player[data-player-state="isturn"] {
 	border: 5px solid #c5c;
+	border-right: 2vw solid;
+	border-color: red;
 }
 .card {
 	max-height: 80vh;

@@ -22,32 +22,6 @@ var set_player_name = function() {
     return false;
 }
 
-// var ask_player_ready = function() {
-//     $('#player-ready').show();
-//     return false;
-// };
-
-// var set_player_ready = function() {
-//     status_message("player/set_player_ready", "Trying to set ready")
-//     socket.emit('set-player-ready', clientUniqueID, true, function(success) {
-//         if (success === true) {
-
-//             playerReady = true;
-//             sessionStorage.setItem('playerReady', playerReady);
-
-//             status_message("player/set_player_ready", "Player Ready");
-
-//             $('.player-name')
-//                 .addClass('player-is-ready');
-//             $('.ask-player-ready').fadeOut();
-                
-//         } else {
-//             status_message("player/set_player_ready", "Failed to set Ready");
-//         }
-//     });
-//     return false;
-// };
-
 var draw_card = function() {
     status_message("player/draw_card", "Drawing a card")
     if($(".card").length < 2){
@@ -124,31 +98,7 @@ var card_div = function(face, pos) {
 
 var socket_game_state = function(game_state) {
     localGameState = game_state;
-    // console.log("Received Game State: ", game_state)
-
-    // // If the round is going.
-    // if (game_state['in_game'] === true) {
-
-    //     // Read hand from state. 
-    //     // Other players can mess with it.
-    //     HAND = game_state['players'][PLAYER_NAME]['hand']
-
-    //     // Hide Ready Message.
-    //     //  probably show something like "game start!"
-    //     if (game_state['turn'] === 1) {
-    //         $('#player-ready').hide();
-    //     }
-
-    //     if (game_state['active_player'] === PLAYER_NAME) {
-
-    //         // Draw Card a begining of turn
-    //         if (game_state['turn_phase'] === 0) {
-    //             status_message('player', 'Your turn, ' + PLAYER_NAME);
-    //             draw_card();
-    //         }
-    //     }
-
-    //     redraw_cards();
+    //console.log("Received Game State: ", game_state)
     return true;
 }
 
@@ -177,11 +127,6 @@ var restore_session = function() {
     status_message("player/restore_session", "Trying to restore session")
     if (playerName) {
         set_player_name();
-        // if (playerReady) {
-        //     set_player_ready();
-        // } else {
-        //     ask_player_ready(); 
-        // }
     } else {
         $('.ask-player-name').show();
     }
@@ -251,10 +196,6 @@ $('.box').click(function() {
     flip_cards();
 });
 
-// $('.ask-player-ready').click(function() {
-//     set_player_ready();
-// });
-
 $('.draw_card').click(function() {
     draw_card();
 })
@@ -264,8 +205,6 @@ $('.draw_card').click(function() {
 $('.ask-player-name').submit(function() {
     playerName = $(".ask-player-name input").val()
     set_player_name();
-    ask_player_ready();
-
     return false;
 });
 

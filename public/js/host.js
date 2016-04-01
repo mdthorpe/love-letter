@@ -14,15 +14,6 @@ var update_player_list = function(players) {
     }
 };
 
-// var count_ready_players = function() {
-//     var counter = 0;
-//     for (var p in this) {
-//         if (this[p].hasOwnProperty("ready") &&
-//             this[p].ready === true)++counter;
-//     }
-//     return counter;
-// };
-
 var count_connected_players = function() {
     var counter = 0;
     for (var p in this) {
@@ -31,10 +22,6 @@ var count_connected_players = function() {
     }
     return counter;
 }
-
-// var update_ready = function(players) {
-//     $("#ready-players").text(count_ready_players.call(players));
-// };
 
 var update_connected = function(players) {
     $("#connected-players").text(count_connected_players.call(players));
@@ -51,12 +38,6 @@ var update_game_state = function(game_state) {
 var update_host_view = function(players) {
     update_player_list(players);
     update_connected(players);
-    // update_ready(players);
-    // if (count_ready_players.call(players) === 
-    //     parseInt($("#total-players").text())) {
-    //     status_message('HOST', 'All players ready');
-    //     socket.emit('start-game');
-    // }
 }
 
 // Debug Commands

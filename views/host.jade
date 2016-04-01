@@ -3,24 +3,8 @@ html
   include ./includes/head.jade
   link(href='/css/host.css', rel='stylesheet')
   body
-    //- .room-name Room: 
-    //-   !=room 
-    //-   ul.player-states
-    //-   li Total: 
-    //-       = game_state.total_players
-    //-   li Connected: 
-    //-     span#connected-players
-    //-   li Ready: 
-    //-     span#ready-players 0
-    //-   li In Game:
-    //-      = game_state.in_game
-    //- .logo
-    //-   img(src='/img/love-letter-logo.jpg')
     .content
       ul#players.players
-        li Test
-        li Test
-      //- .box.card(data-anim="none" data-face="back" data-pos="discard")
       .box.card(data-anim="none" data-face="none" data-pos="discard")
     .debug
       button.debug-button.start-game Start Game
