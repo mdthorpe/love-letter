@@ -2,10 +2,47 @@
 
 /*csslint empty-rules: false, important: false, size: false*/
 body {
-	font-family: 'Josefin Slab', serif;	/*font-size: 6vh;*/
+	font-family: 'Josefin Slab', serif;
 	margin: 0;
-	padding: 0;    /*box-sizing: border-box;*/
+	padding: 0;
+	background-color: #376568;
+
 }
+.box {
+	width: 40vw;
+	height: 90vh;
+	position: absolute;
+	top: 10vh;
+	left: 10vw;
+	border-radius: 5px;
+	background-size: contain;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	animation-duration: 0.5s;
+	animation-delay: 0s;
+	animation-iteration-count: 1;
+	animation-direction: alternate;
+	animation-fill-mode: forwards;
+}
+.card {
+	margin-left: auto;
+	margin-right: auto;
+	z-index: -1;
+}
+.card[data-pos="deck"] {transform: translate(0vw, -10vh) rotateX(-0deg);}
+.card[data-pos="discard"] {transform: translate(45vw, -10vh) rotateX(-0deg);}
+
+.card[data-face="none"]     {background-image: url('/img/0_none.png');}
+.card[data-face="back"]     {background-image: url('/img/0_back.png');}
+.card[data-face="guard"]    {background-image: url('/img/1_guard.png');}
+.card[data-face="priest"]   {background-image: url('/img/2_priest.png');}
+.card[data-face="baron"]    {background-image: url('/img/3_baron.png');}
+.card[data-face="handmaid"] {background-image: url('/img/4_handmaid.png');}
+.card[data-face="prince"]   {background-image: url('/img/5_prince.png');}
+.card[data-face="king"]     {background-image: url('/img/6_king.png');}
+.card[data-face="countess"] {background-image: url('/img/7_countess.png');}
+.card[data-face="princess"] {background-image: url('/img/8_princess.png');}
+
 ul {
 	list-style: none;
 	margin: 0;
@@ -24,55 +61,50 @@ button {
 	height: 4vh;
 }
 .players {
-	width: 100%;
+	width: 30vw;
+	transform: translate(0vh, 4vw) rotateX(-0deg);
+	z-index: 10;
 }
-.players li {
+
+.player {
 	font-size: 4vh;
+	height: 10vh;
+	width: 44vw;
 	display: block;
-	width: 90%;
 	background: #ddd;
-	margin-top: 2vh;
+	margin: 2vh 0;
 	padding: 2vh;
 	white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    border-radius: 0 8px 8px 0;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	border-radius: 0 8px 8px 0;
+	opacity: 0.9;
 }
-.player-is-ready {
+
+.player[data-player-state="notready"] {
+	background: gray;
+	color: #444;
+}
+.player[data-player-state="ready"] {
 	background: #5c5;
+	border-right: 2vw solid;
+	border-color: red;
 }
-.player-is-turn {
+.player[data-player-state="isturn"] {
 	border: 5px solid #c5c;
 }
-.cards {
-	width: 100%;
-	margin: 1vw;
-}
 .card {
-	max-height: 70vh;
-
+	max-height: 80vh;
 }
 
-.left {
-	float: left;
-	width: 40%
+
+.debug {
+	position: absolute;
+	bottom: 13vh;
 }
-.right {
-	float: right;
-	width: 60%
-}
-img {
-	max-width: 100%;
-	height: auto;
-}
-.group:after {
-	content: "";
-	display: table;
-	clear: both;
-}
-@media screen and (max-width:480px) {
-	.left, .right {
-		float: none;
-		width: auto;
-	}
+.debug-button {
+	font-size: 2vh;
+	width: 33vw;
+	display: inline-block;	
+	margin:1px 0px 0px 1px;
 }

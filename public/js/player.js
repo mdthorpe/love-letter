@@ -65,8 +65,29 @@ var draw_card = function() {
     return false;
 }
 
-var play_card = function(c) {
-    console.log("Playing card: ", c);
+var play_card = function() {
+    if ( $(".card[data-pos='top']").length ) {
+        
+        $(".card[data-pos='top']")
+            .attr('data-anim', 'playcard')
+            .attr('data-pos', 'played');
+        $('.box').unbind('click');
+
+         $(".card[data-pos='bottom']")
+             .attr('data-anim', 'slidemiddle')
+
+        setTimeout(function() {
+            $(".card[data-pos='played']").remove();
+            $(".card[data-pos='bottom']")
+             .attr('data-pos', 'middle')
+        }, 500);
+
+        // $(".card[data-pos='to-middle']")
+        //     .attr('data-pos', 'middle');
+
+        // $(".card[data-pos='to-middle']")
+        //     .attr('data-pos', 'middle');
+    }
 }
 
 var show_card = function(c) {
@@ -81,42 +102,20 @@ var show_card = function(c) {
         $(".card[data-pos='outtop']")
             .attr('data-anim', 'drawcardToTop')
             .attr('data-pos', 'top');
+
+        $('.box').click(function() {flip_cards();});
+        $('.box').on('swipe', function() {
+        $(this)
+            .attr('data-anim', 'none')
+            .attr('data-anim', 'playcard')
+    });
     } else {
         var d = card_div(c,"outtop");
         $(".cards").append(d);
         $(".card[data-pos='outtop']")
             .attr('data-anim', 'drawcardToMiddle')
             .attr('data-pos', 'middle');
-        console.log(d);
     }
-}
-
-var render_hand = function() {
-            //     .box.card(data-pos="top",data-anim="none",data-face="back")
-            // .box.card(data-pos="bottom", data-anim="none",data-face="back")
-    console.log("Render hand..");
-    var hand = localPlayerList[clientUniqueID].hand;
-    if(hand.length === 1){
-        console.log("one card");
-        var c = card_div(hand[0],"middle");
-        console.log(c);
-        $(".cards.container").html(c);
-    }
-
-    if(hand.length === 2){
-        console.log("two card");
-        var t = card_div(hand[0],"top");
-        console.log(t);
-        var b = card_div(hand[1],"bottom");
-        console.log(t);
-        $(".cards.container").html(t+b);
-    }
-
-    $('.box').on('swipe', function() {
-        $(this)
-            .attr('data-anim', 'none')
-            .attr('data-anim', 'playcard')
-    });
 }
 
 var card_div = function(face, pos) {
@@ -169,7 +168,7 @@ var socket_player_list = function(player_list) {
 
     localPlayerList = player_list;
     if (updateHand) {
-        render_hand();
+        //render_hand();
     }
 }
 

@@ -4,15 +4,16 @@ var clientType = "host";
 
 var update_player_list = function(players) {
     $("#players").html('');
+    console.log("Players: ",players);
     for (var p in players) {
         
         var name = players[p]['playerName'];
         $("#players").append($('<li>').text(name).addClass("player"));
 
         if (players[p].playerReady === true) {
-            $("#players li:last").addClass('player-is-ready');
+            $("#players li:last").attr('data-player-state','ready');
         } else {
-            $("#players li:last").addClass('player-is-ready');
+            $("#players li:last").attr('data-player-state','notready');
         }
     }
 };
