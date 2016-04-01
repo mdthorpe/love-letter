@@ -22,43 +22,41 @@ var set_player_name = function() {
     return false;
 }
 
-var ask_player_ready = function() {
-    $('#player-ready').show();
-    return false;
-};
+// var ask_player_ready = function() {
+//     $('#player-ready').show();
+//     return false;
+// };
 
-var set_player_ready = function() {
-    status_message("player/set_player_ready", "Trying to set ready")
-    socket.emit('set-player-ready', clientUniqueID, true, function(success) {
-        if (success === true) {
+// var set_player_ready = function() {
+//     status_message("player/set_player_ready", "Trying to set ready")
+//     socket.emit('set-player-ready', clientUniqueID, true, function(success) {
+//         if (success === true) {
 
-            playerReady = true;
-            sessionStorage.setItem('playerReady', playerReady);
+//             playerReady = true;
+//             sessionStorage.setItem('playerReady', playerReady);
 
-            status_message("player/set_player_ready", "Player Ready");
+//             status_message("player/set_player_ready", "Player Ready");
 
-            $('.player-name')
-                .addClass('player-is-ready');
-            $('#player-ready :button')
-                .addClass('disable-actions')
-                .text('Waiting..')
-
-        } else {
-            status_message("player/set_player_ready", "Failed to set Ready");
-        }
-    });
-    return false;
-};
+//             $('.player-name')
+//                 .addClass('player-is-ready');
+//             $('.ask-player-ready').fadeOut();
+                
+//         } else {
+//             status_message("player/set_player_ready", "Failed to set Ready");
+//         }
+//     });
+//     return false;
+// };
 
 var draw_card = function() {
     status_message("player/draw_card", "Drawing a card")
     if($(".card").length < 2){
         socket.emit('draw-card', clientUniqueID, function(callback) {
             if (callback["success"] === true) {
-                status_message("player/set_player_ready", "Drew card: " + callback["card"]);
+                status_message("player/draw_card", "Drew card: " + callback["card"]);
                 show_card(callback["card"]);
             } else {
-                status_message("player/set_player_ready", "Failed to draw card");
+                status_message("player/draw_card", "Failed to draw card");
             }
         });
     }
@@ -179,13 +177,16 @@ var restore_session = function() {
     status_message("player/restore_session", "Trying to restore session")
     if (playerName) {
         set_player_name();
-        if (playerReady)
-            set_player_ready();
+        // if (playerReady) {
+        //     set_player_ready();
+        // } else {
+        //     ask_player_ready(); 
+        // }
     } else {
         $('.ask-player-name').show();
     }
 
-    //ask_player_ready(); 
+    
     status_message("player/restore_session", "Complete.")
     return false;
 }
@@ -250,9 +251,9 @@ $('.box').click(function() {
     flip_cards();
 });
 
-$('#player-ready :button').click(function() {
-    set_player_ready();
-});
+// $('.ask-player-ready').click(function() {
+//     set_player_ready();
+// });
 
 $('.draw_card').click(function() {
     draw_card();
