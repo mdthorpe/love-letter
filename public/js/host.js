@@ -4,28 +4,27 @@ var clientType = "host";
 
 var update_player_list = function(players) {
     $("#players").html('');
-    console.log("Players: ",players);
     for (var p in players) {
-        
         var name = players[p]['playerName'];
         $("#players").append($('<li>').text(name).addClass("player"));
-        $("#players li:last").attr('data-player-state','connected');
+        if(players[p].connected === true) 
+            $("#players li:last").attr('data-player-state','connected');
         
     }
 };
 
-var count_connected_players = function() {
-    var counter = 0;
-    for (var p in this) {
-        if (this[p].hasOwnProperty("connected") &&
-            this[p].connected === true)++counter;
-    }
-    return counter;
-}
+// var count_connected_players = function() {
+//     var counter = 0;
+//     for (var p in this) {
+//         if (this[p].hasOwnProperty("connected") &&
+//             this[p].connected === true)++counter;
+//     }
+//     return counter;
+// }
 
-var update_connected = function(players) {
-    $("#connected-players").text(count_connected_players.call(players));
-};
+// var update_connected = function(players) {
+//     $("#connected-players").text(count_connected_players.call(players));
+// };
 
 var update_in_game = function(in_game) {
     $("#in-game").text(in_game)
