@@ -182,18 +182,18 @@ io.on('connection', function(socket) {
 
     });
 
-    socket.on('set-player-ready', function(uid, isReady, callback) {
-        event_stream({
-            "source": 'app/socket/set-player-ready',
-            "event": uid
-        });
+    // socket.on('set-player-ready', function(uid, isReady, callback) {
+    //     event_stream({
+    //         "source": 'app/socket/set-player-ready',
+    //         "event": uid
+    //     });
 
-        Game.Clients.updateByUid(uid, "playerReady", isReady);
+    //     Game.Clients.updateByUid(uid, "playerReady", isReady);
 
-        broadcast_player_list();
+    //     broadcast_player_list();
 
-        callback(true);
-    });
+    //     callback(true);
+    // });
 
 
     // Game Events : Start the game
