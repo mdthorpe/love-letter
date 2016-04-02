@@ -24,7 +24,7 @@ var set_player_name = function() {
 
 var draw_card = function() {
     status_message("player/draw_card", "Drawing a card")
-    if($(".card").length < 2){
+    if ($(".card").length < 2) {
         socket.emit('draw-card', clientUniqueID, function(callback) {
             if (callback["success"] === true) {
                 status_message("player/draw_card", "Drew card: " + callback["card"]);
@@ -38,51 +38,51 @@ var draw_card = function() {
 }
 
 var play_card = function() {
-    if ( $(".card[data-pos='top']").length ) {
-        
+
+    // If there is a top card. (ie: You have two cards)
+    if ($(".card[data-pos='top']").length) {
+
+        // Disable card swapping
+        $('.box').unbind('click');
+
+        // Player card
         $(".card[data-pos='top']")
             .attr('data-anim', 'playcard')
             .attr('data-pos', 'played');
-        $('.box').unbind('click');
 
-         $(".card[data-pos='bottom']")
-             .attr('data-anim', 'slidemiddle')
+
+        $(".card[data-pos='bottom']")
+            .attr('data-anim', 'slidemiddle')
 
         setTimeout(function() {
             $(".card[data-pos='played']").remove();
             $(".card[data-pos='bottom']")
-             .attr('data-pos', 'middle')
-        }, 500);
-
-        // $(".card[data-pos='to-middle']")
-        //     .attr('data-pos', 'middle');
-
-        // $(".card[data-pos='to-middle']")
-        //     .attr('data-pos', 'middle');
+                .attr('data-pos', 'middle')
+        }, 1000);
     }
 }
 
 var show_card = function(c) {
-    if($(".card").length === 1){
-        var d = card_div(c,"outtop");
+    if ($(".card").length === 1) {
+        var d = card_div(c, "outtop");
         $(".cards").append(d);
         $(".card[data-pos='middle']")
             .attr('data-anim', 'slidebottom')
-            .attr('data-pos', 'to-bottom'); 
+            .attr('data-pos', 'to-bottom');
         $(".card[data-pos='to-bottom']")
             .attr('data-pos', 'bottom');
         $(".card[data-pos='outtop']")
             .attr('data-anim', 'drawcardToTop')
             .attr('data-pos', 'top');
 
-        $('.box').click(function() {flip_cards();});
+        $('.box').click(function() {
+            flip_cards();
+        });
         $('.box').on('swipe', function() {
-        $(this)
-            .attr('data-anim', 'none')
-            .attr('data-anim', 'playcard')
-    });
+            play_card();
+        });
     } else {
-        var d = card_div(c,"outtop");
+        var d = card_div(c, "outtop");
         $(".cards").append(d);
         $(".card[data-pos='outtop']")
             .attr('data-anim', 'drawcardToMiddle')
@@ -91,9 +91,7 @@ var show_card = function(c) {
 }
 
 var card_div = function(face, pos) {
-    return '<div data-pos=' + pos 
-         + ' data-face=' + face 
-         + ' class="box card"></div>';
+    return '<div data-pos=' + pos + ' data-face=' + face + ' class="box card"></div>';
 }
 
 var socket_game_state = function(game_state) {
@@ -106,10 +104,10 @@ var socket_player_list = function(player_list) {
 
     var updateHand = false;
 
-    if(localPlayerList[clientUniqueID]){
+    if (localPlayerList[clientUniqueID]) {
 
-        if(!localPlayerList[clientUniqueID].hand.equals(
-            player_list[clientUniqueID].hand) ){
+        if (!localPlayerList[clientUniqueID].hand.equals(
+            player_list[clientUniqueID].hand)) {
             updateHand = true;
         }
     }
@@ -131,7 +129,7 @@ var restore_session = function() {
         $('.ask-player-name').show();
     }
 
-    
+
     status_message("player/restore_session", "Complete.")
     return false;
 }
@@ -199,6 +197,22 @@ $('.box').click(function() {
 $('.draw_card').click(function() {
     draw_card();
 })
+
+$('.show_banner').click(function() {
+    $(".banners").attr("data-anim", "showBanner").fadeIn();
+})
+
+$('.hide_banner').click(function() {
+    $(".banners").attr("data-anim", "hideBanner").fadeOut();
+})
+
+$('.flash_banner').click(function() {
+    $(".banners").attr("data-anim", "showBanner").fadeIn();
+    setTimeout(function() {
+        $(".banners").attr("data-anim", "hideBanner").fadeOut();
+    }, 2000);
+})
+
 
 // forms
 

@@ -6,6 +6,7 @@ body {
 	margin: 0;
 	padding: 0;
 	background-color: #376568;
+	perspective: 800px;
 }
 
 .frameT {
@@ -50,17 +51,8 @@ button {
 	display: block;
 	margin: 1vh auto;
 	width: 50vw;
+	height: 8vh;
 	font-size: 4vh;
-}
-
-.ask-player-ready {
-	font-size: 5vh;
-	margin-top: 30vh;
-	width: 80vw;
-	min-height: 10vh;
-	border: 1px solid #333;
-	border-radius: 2vh;
-	display: none;
 }
 
 .card {
@@ -68,6 +60,28 @@ button {
 	margin-right: auto;	
 }
 
+.banners {
+	position: fixed;
+	top: 20vh;
+	left: 0vh;
+	z-index: 12;
+	width: 100vw;
+	animation-duration: .5s;
+	animation-delay: 0s;
+	animation-iteration-count: 1;
+	animation-direction: alternate;
+	animation-fill-mode: forwards;
+}
+.banner {
+	background-color: rgba(255, 245, 177, 0.9);
+	color: #333;
+	height: 100%;
+	font-size: 8vh;
+	text-align: center;
+	padding-top: 1.5vh;
+	border-top: 1vh solid black;
+	border-bottom: 1vh solid black;
+}
 
 .player-name, .player-info {
 	z-index: 2;
@@ -86,17 +100,10 @@ button {
 	display: none;
 }
 
-.message-banner-box {
-
-}
-
-.message-banner-message {
-
-}
-
 .debug {
 	position: absolute;
 	bottom: 13vh;
+	z-index: 99;
 }
 .debug-button {
 	font-size: 2vh;
@@ -109,7 +116,6 @@ button {
   width: 90vw;
   height: 80vh;
   position: relative;
-  perspective: 800px;
 }
 
 .box{
@@ -142,36 +148,36 @@ button {
 .princess { background-image: url('/img/8_princess.png'); }
 
 
-.card[data-pos="bottom"]{
+.[data-pos="bottom"]{
 	transform: translate(  -4vh,  -4vh) rotate(  0deg);
 	z-index: 0;
 }
 
-.card[data-pos="top"] {
+.[data-pos="top"] {
 	transform: translate(  4vh,  4vh) rotate(  0deg); 
 	z-index: 1; 
 }
 
-.card[data-pos="middle"] {
+.[data-pos="middle"] {
 	transform: translate(  0vh,  0vh) rotate(  0deg); 
 	z-index: 0; 
 }
 
-.card[data-pos="outtop"] {
+.[data-pos="outtop"] {
 	transform: translate(  4vh,  -110vh) rotateX(  -120deg); 
 	z-index: 1; 
 }
 
-.card[data-anim="top"]{animation-name: bottomcard;}
-.card[data-anim="bottom"]{animation-name: topcard;}
-.card[data-anim="slidebottom"]{animation-name: slidebottom;}
-.card[data-anim="slidetop"]{animation-name: slidetop;}
-.card[data-anim="slidemiddle"]{animation-name: slidemiddle;}
-.card[data-anim="playcard"]{animation-name: playcard;}
-.card[data-anim="drawcardToTop"]{animation-name: drawcardToTop;}
-.card[data-anim="drawcardToMiddle"]{animation-name: drawcardToMiddle;}
+.card[data-anim="top"]             { animation-name: bottomcard;}
+.card[data-anim="bottom"]          { animation-name: topcard;}
+.card[data-anim="slidebottom"]     { animation-name: slidebottom;}
+.card[data-anim="slidetop"]        { animation-name: slidetop;}
+.card[data-anim="slidemiddle"]     { animation-name: slidemiddle;}
+.card[data-anim="playcard"]        { animation-name: playcard;}
+.card[data-anim="drawcardToTop"]   { animation-name: drawcardToTop;}
+.card[data-anim="drawcardToMiddle"]{ animation-name: drawcardToMiddle;}
 
-.card[data-face="back"]     {background-image: url('/img/0_back.png')}
+.card[data-face="back"]     { background-image: url('/img/0_back.png')}
 .card[data-face="guard"]    { background-image: url('/img/1_guard.png'); }
 .card[data-face="priest"]   { background-image: url('/img/2_priest.png'); }
 .card[data-face="baron"]    { background-image: url('/img/3_baron.png'); }
@@ -181,22 +187,33 @@ button {
 .card[data-face="countess"] { background-image: url('/img/7_countess.png'); }
 .card[data-face="princess"] { background-image: url('/img/8_princess.png'); }
 
+.banners[data-anim="showBanner"] { 
+	transform-origin: center;
+	transition-timing-function: ease-in-out;
+	animation-name: showBanner;
+}
+.banners[data-anim="hideBanner"] { 
+	transform-origin: center;
+	transition-timing-function: ease-in-out;
+	animation-name: hideBanner;
+}
+
 @keyframes topcard {
-    0% { transform: translate(  4vh,  4vh) rotateY(  0deg) rotateX(  0deg); z-index: 1}
-   10% { transform: translate(  4vh,  4vh) rotateY(  0deg) rotateX(  0deg); z-index: 1}
-   45% { transform: translate( 22vh,   0px) rotateY( 45deg) rotateX( 10deg); z-index: 1}
-   55% { transform: translate( 22vh,   0px) rotateY( 45deg) rotateX( 10deg); z-index: 0}
-   90% { transform: translate( -4vh, -4vh) rotateY(  0deg) rotateX(  0deg); z-index: 0}
-  100% { transform: translate( -4vh, -4vh) rotateY(  0deg) rotateX(  0deg); z-index: 0}
+    0% { transform: translate(  4vh,  4vh)  rotateY(  0deg) rotateX(  0deg); z-index: 1}
+   10% { transform: translate(  4vh,  4vh)  rotateY(  0deg) rotateX(  0deg); z-index: 1}
+   45% { transform: translate( 22vh,  0px)  rotateY( 45deg) rotateX( 10deg); z-index: 1}
+   55% { transform: translate( 22vh,  0px)  rotateY( 45deg) rotateX( 10deg); z-index: 0}
+   90% { transform: translate( -4vh, -4vh)  rotateY(  0deg) rotateX(  0deg); z-index: 0}
+  100% { transform: translate( -4vh, -4vh)  rotateY(  0deg) rotateX(  0deg); z-index: 0}
 }
 
 @keyframes bottomcard {
     0% { transform: translate(   -4vh,  -4vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
    10% { transform: translate(   -4vh,  -4vh) rotateY(   0deg) rotateX(  0deg); z-index: 0}
-   45% { transform: translate(-22vh,  0px) rotateY( -45deg) rotateX( 10deg); z-index: 0}
-   55% { transform: translate(-22vh,  0px) rotateY( -45deg) rotateX( 10deg); z-index: 1}
-   90% { transform: translate(   4vh,  4vh) rotateY(   0deg) rotateX(  0deg); z-index: 1}
-  100% { transform: translate(   4vh,  4vh) rotateY(   0deg) rotateX(  0deg); z-index: 1}
+   45% { transform: translate(  -22vh,   0px) rotateY( -45deg) rotateX( 10deg); z-index: 0}
+   55% { transform: translate(  -22vh,   0px) rotateY( -45deg) rotateX( 10deg); z-index: 1}
+   90% { transform: translate(   4vh,    4vh) rotateY(   0deg) rotateX(  0deg); z-index: 1}
+  100% { transform: translate(   4vh,    4vh) rotateY(   0deg) rotateX(  0deg); z-index: 1}
 }
 
 @keyframes slidebottom {
@@ -214,7 +231,8 @@ button {
 }
 
 @keyframes playcard {
-  100% { transform: translate(  0vh,  -90vh) rotateY(   10deg) rotateX(  10deg)}
+	0% { transform: translate(  0vh,    0vh) rotateY(   0deg) rotateX(  0deg); z-index: 1;}
+  100% { transform: translate(  0vh,  -90vh) rotateY(   30deg) rotateX(  30deg); z-index: 1;}
 }
 
 @keyframes drawcardToTop {
@@ -227,13 +245,14 @@ button {
 }
 
 @keyframes hideBanner {
-    0% { transform: rotateX(   0deg)}
-   90% { transform: rotateX( -10deg)}
-  100% { transform: rotateX(  90deg)}
+    0% { transform: scale(1);}
+   20% { transform: scale(1.5); opacity: .2}
+  100% { transform: scale(8); opacity: 0}
+
 }
 
 @keyframes showBanner {
-    0% { transform: rotateX(  90deg)}
-   90% { transform: rotateX( -10deg)}
-  100% { transform: rotateX(   0deg)}
+    0% { transform: scale(8); opacity: 0;}
+   80% { transform: scale(8); opacity: 0;}
+  100% { transform: scale(1); opacity: 1;}
 }

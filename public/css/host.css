@@ -43,6 +43,8 @@ body {
 .card[data-face="countess"] {background-image: url('/img/7_countess.png');}
 .card[data-face="princess"] {background-image: url('/img/8_princess.png');}
 
+
+
 ul {
 	list-style: none;
 	margin: 0;
