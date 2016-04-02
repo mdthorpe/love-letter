@@ -1,0 +1,44 @@
+
+
+.banners {
+	animation-duration: .5s;
+	animation-delay: 0s;
+	animation-iteration-count: 1;
+	animation-direction: alternate;
+	animation-fill-mode: forwards;
+}
+
+.banner {
+	background-color: rgba(255, 245, 177, 0.9);
+	color: #333;
+	height: 100%;
+	font-size: 8vh;
+	text-align: center;
+	padding-top: 1.5vh;
+	border-top: 1vh solid black;
+	border-bottom: 1vh solid black;
+}
+
+.banners[data-anim="showBanner"] { 
+	transform-origin: center;
+	transition-timing-function: ease-in-out;
+	animation-name: showBanner;
+}
+.banners[data-anim="hideBanner"] { 
+	transform-origin: center;
+	transition-timing-function: ease-in-out;
+	animation-name: hideBanner;
+}
+
+@keyframes hideBanner {
+    0% { transform: scale(1);}
+   20% { transform: scale(1.5); opacity: .2}
+  100% { transform: scale(8); opacity: 0}
+
+}
+
+@keyframes showBanner {
+    0% { transform: scale(8); opacity: 0;}
+   70% { transform: scale(3); opacity: 0.1;}
+  100% { transform: scale(1); opacity: 1;}
+}
