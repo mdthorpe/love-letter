@@ -13,19 +13,6 @@ var update_player_list = function(players) {
     }
 };
 
-// var count_connected_players = function() {
-//     var counter = 0;
-//     for (var p in this) {
-//         if (this[p].hasOwnProperty("connected") &&
-//             this[p].connected === true)++counter;
-//     }
-//     return counter;
-// }
-
-// var update_connected = function(players) {
-//     $("#connected-players").text(count_connected_players.call(players));
-// };
-
 var update_in_game = function(in_game) {
     $("#in-game").text(in_game)
 }
@@ -36,7 +23,6 @@ var update_game_state = function(game_state) {
 
 var update_host_view = function(players) {
     update_player_list(players);
-    update_connected(players);
 }
 
 // Debug Commands

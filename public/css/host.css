@@ -43,7 +43,13 @@ body {
 .card[data-face="countess"] {background-image: url('/img/7_countess.png');}
 .card[data-face="princess"] {background-image: url('/img/8_princess.png');}
 
-
+.banner-box{
+	position: fixed;
+	top: 20vh;
+	left: 0vh;
+	z-index: 12;
+	width: 100vw;
+}
 
 ul {
 	list-style: none;

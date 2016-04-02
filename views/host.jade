@@ -2,10 +2,14 @@ doctype html5
 html
   include ./includes/head.jade
   link(href='/css/host.css', rel='stylesheet')
+  link(href='/css/message_banner.css', rel='stylesheet')
   body
     .content
       ul#players.players
       .box.card(data-anim="none" data-face="none" data-pos="discard")
+      .banner-box
+        .banners(data-anim="none")
+          .banner Waiting to start.
     .debug
       button.debug-button.start-game Start Game
       button.debug-button.send-state Send State

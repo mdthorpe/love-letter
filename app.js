@@ -182,19 +182,6 @@ io.on('connection', function(socket) {
 
     });
 
-    // socket.on('set-player-ready', function(uid, isReady, callback) {
-    //     event_stream({
-    //         "source": 'app/socket/set-player-ready',
-    //         "event": uid
-    //     });
-
-    //     Game.Clients.updateByUid(uid, "playerReady", isReady);
-
-    //     broadcast_player_list();
-
-    //     callback(true);
-    // });
-
 
     // Game Events : Start the game
 
@@ -286,19 +273,20 @@ var start_game = function(socket) {
     if (Game["in_game"] === false) {
 
         // Push list of player names into Game.
-        io.sockets.sockets.map(function(e) {
-            if (e.hasOwnProperty('username')) {
-                var new_player_state = player_init(e.username);
-                console.log("Adding player: ", e.username);
-                Game['Players'][e.username] = new_player_state;
-            }
-        })
+        // io.sockets.sockets.map(function(e) {
+        //     if (e.hasOwnProperty('username')) {
+        //         var new_player_state = player_init(e.username);
+        //         console.log("Adding player: ", e.username);
+        //         Game['Players'][e.username] = new_player_state;
+        //     }
+        // })
 
         Game["in_game"] = true;
-        Game["active_player"] = Object.keys(Game["Players"])[0];
+        // Game["active_player"] = Object.keys(Game["Players"])[0];
         Game["round"] = 1
 
         console.log("Starting Game: ", Game);
+        broadcast_message("Starting Game");
         return true;
     }
     return false

@@ -47,6 +47,14 @@ input[type="text"] {
     font-size: 4vh;
 }
 
+.banner-box {
+		position: fixed;
+	top: 20vh;
+	left: 0vh;
+	z-index: 12;
+	width: 100vw;
+
+}
 button {
 	display: block;
 	margin: 1vh auto;
@@ -58,29 +66,6 @@ button {
 .card {
 	margin-left: auto;
 	margin-right: auto;	
-}
-
-.banners {
-	position: fixed;
-	top: 20vh;
-	left: 0vh;
-	z-index: 12;
-	width: 100vw;
-	animation-duration: .5s;
-	animation-delay: 0s;
-	animation-iteration-count: 1;
-	animation-direction: alternate;
-	animation-fill-mode: forwards;
-}
-.banner {
-	background-color: rgba(255, 245, 177, 0.9);
-	color: #333;
-	height: 100%;
-	font-size: 8vh;
-	text-align: center;
-	padding-top: 1.5vh;
-	border-top: 1vh solid black;
-	border-bottom: 1vh solid black;
 }
 
 .player-name, .player-info {
@@ -187,16 +172,6 @@ button {
 .card[data-face="countess"] { background-image: url('/img/7_countess.png'); }
 .card[data-face="princess"] { background-image: url('/img/8_princess.png'); }
 
-.banners[data-anim="showBanner"] { 
-	transform-origin: center;
-	transition-timing-function: ease-in-out;
-	animation-name: showBanner;
-}
-.banners[data-anim="hideBanner"] { 
-	transform-origin: center;
-	transition-timing-function: ease-in-out;
-	animation-name: hideBanner;
-}
 
 @keyframes topcard {
     0% { transform: translate(  4vh,  4vh)  rotateY(  0deg) rotateX(  0deg); z-index: 1}
@@ -242,17 +217,4 @@ button {
 @keyframes drawcardToMiddle {
 	0% { transform: translate(  0vh,  -110vh) rotateY(   0deg) rotateX(  -120deg)}
   100% { transform: translate(  0vh,  0vh)    rotateY(   0deg)  rotateX(  0deg)}
-}
-
-@keyframes hideBanner {
-    0% { transform: scale(1);}
-   20% { transform: scale(1.5); opacity: .2}
-  100% { transform: scale(8); opacity: 0}
-
-}
-
-@keyframes showBanner {
-    0% { transform: scale(8); opacity: 0;}
-   80% { transform: scale(8); opacity: 0;}
-  100% { transform: scale(1); opacity: 1;}
 }
