@@ -7,25 +7,22 @@ var update_player_list = function(players) {
     for (var p in players) {
         var name = players[p]['playerName'];
         $("#players").append($('<li>').text(name).addClass("player"));
-        if(players[p].connected === true) 
-            $("#players li:last").attr('data-player-state','connected');
-        
+        if (players[p].connected === true)
+            $("#players li:last").attr('data-player-state', 'connected');
+        if (players[p].isTurn === true)
+            $("#players li:last").attr('data-player-state', 'isturn');
     }
 };
 
-var update_in_game = function(in_game) {
-    $("#in-game").text(in_game)
-}
 
-var update_game_state = function(game_state) {
-    update_in_game(game_state["in_game"]);
-}
+var show_played_card = function(card) {
+    console.log(card);
+    $(".cards").append('<div class="box card" data-pos="offscreen" data-face="' + card + '" data-anim="playcard">');
+};
 
-var update_host_view = function(players) {
-    update_player_list(players);
-}
-
-// Debug Commands
+var update_game_state = function(game){
+    console.log("game_state:",game);
+};
 
 
 var send_state = function() {
@@ -35,7 +32,7 @@ var send_state = function() {
         } else
             status_message("game-state", "Game state failed");
     })
-}
+};
 
 
 var send_players = function() {
@@ -51,24 +48,39 @@ var send_players = function() {
 var start_game = function() {
     socket.emit('start-game', function(callback) {
         if (callback === true) {
-            status_message("game-state", "start game");
+            status_message("start-game", "start game");
         }
     })
 }
 
 
+// Debug 
 $(".send-state").click(function() {
     send_state();
 })
 
+$(".start-game").click(function() {
+    start_game();
+})
 
 $(".send-players").click(function() {
     send_players();
 })
 
-$(".show played-card").click(function() {
-    console.log("Played this card:");
+$('.toggle-banner').click(function() {
+    toggle_banner();
 })
+
+$('.flash-banner').click(function() {
+    set_banner("Testing");
+    flash_banner();
+})
+
+$('.show-played-card').click(function() {
+    show_played_card("guard");
+})
+
+
 
 
 // Host events
@@ -81,9 +93,15 @@ socket.on('game-state', function(game_state) {
 });
 
 socket.on('player-list', function(players) {
-    status_message('host/socket/player-list', 'Received Player List' + players);
-    update_host_view(players);
+    status_message('host/socket/player-list', 'Received Player List: ' + players);
+    update_player_list(players);
     return false;
+});
+
+socket.on('played-card', function(card) {
+    status_message('host/socket/played-card', 'Played Card: ' + card);
+    show_played_card(card);
+    // return false;
 });
 
 

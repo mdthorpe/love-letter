@@ -6,17 +6,18 @@
 	animation-iteration-count: 1;
 	animation-direction: alternate;
 	animation-fill-mode: forwards;
+	display: none;
 }
 
 .banner {
-	background-color: rgba(255, 245, 177, 0.9);
 	color: #333;
 	height: 100%;
 	font-size: 8vh;
 	text-align: center;
-	padding-top: 1.5vh;
-	border-top: 1vh solid black;
-	border-bottom: 1vh solid black;
+	background-color: rgba(255, 245, 177, 0.9);
+	border-top: .5vh solid black;
+	border-bottom: .5vh solid black;
+	padding: 1vh;
 }
 
 .banners[data-anim="showBanner"] { 

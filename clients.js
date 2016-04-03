@@ -64,9 +64,9 @@ exports.addClient = function(uid, clientType) {
                 "clientType": clientType,
                 "connected": false,
                 "hand": [],
-                "active": false,
+                "isTurn": false,
                 "winner": false,
-                "lost": false
+                "outOfRound": false
             }
         } else {
             var newClient = {

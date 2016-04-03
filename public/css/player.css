@@ -48,13 +48,13 @@ input[type="text"] {
 }
 
 .banner-box {
-		position: fixed;
+	position: fixed;
 	top: 20vh;
 	left: 0vh;
 	z-index: 12;
 	width: 100vw;
-
 }
+
 button {
 	display: block;
 	margin: 1vh auto;

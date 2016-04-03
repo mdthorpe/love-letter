@@ -3,12 +3,7 @@
 var clientType = "player"
 
 var playerName = sessionStorage.getItem('playerName');
-var playerReady = sessionStorage.getItem('playerReady');
-var playerInGame = sessionStorage.getItem('playerInGame');
 var playerCards = sessionStorage.getItem('playerCards');
-
-var localGameState = {};
-var localPlayerList = {};
 
 var set_player_name = function() {
 
@@ -42,17 +37,25 @@ var play_card = function() {
     // If there is a top card. (ie: You have two cards)
     if ($(".card[data-pos='top']").length) {
 
-        // Disable card swapping
-        $('.box').unbind('click');
+        var cardFace = $(".card[data-pos='top']").attr("data-face");
 
-        // Player card
-        $(".card[data-pos='top']")
-            .attr('data-anim', 'playcard')
-            .attr('data-pos', 'played');
+        socket.emit('play-card', clientUniqueID, cardFace, function(callback) {
+            if (callback["success"] === true) {
+
+                // Disable card swapping
+                $('.box').unbind('click');
+
+                // Player card
+                $(".card[data-pos='top']")
+                    .attr('data-anim', 'playcard')
+                    .attr('data-pos', 'played');
 
 
-        $(".card[data-pos='bottom']")
-            .attr('data-anim', 'slidemiddle')
+                $(".card[data-pos='bottom']")
+                    .attr('data-anim', 'slidemiddle')
+
+            }
+        })
 
         setTimeout(function() {
             $(".card[data-pos='played']").remove();
@@ -94,29 +97,25 @@ var card_div = function(face, pos) {
     return '<div data-pos=' + pos + ' data-face=' + face + ' class="box card"></div>';
 }
 
-var socket_game_state = function(game_state) {
-    localGameState = game_state;
-    //console.log("Received Game State: ", game_state)
+var socket_game_state = function(game) {
+    console.log(game.gameState);
+    var cards_in_hand = $(".card").length;
+
+    if (game.gameState.in_game === true) {
+        if (cards_in_hand === 0) {
+            draw_card();
+        }
+        if (game.gameState.active_player === clientUniqueID) {
+            draw_card();
+        }
+    }
     return true;
 }
 
 var socket_player_list = function(player_list) {
-
-    var updateHand = false;
-
-    if (localPlayerList[clientUniqueID]) {
-
-        if (!localPlayerList[clientUniqueID].hand.equals(
-            player_list[clientUniqueID].hand)) {
-            updateHand = true;
-        }
-    }
-
-    localPlayerList = player_list;
-    if (updateHand) {
-        //render_hand();
-    }
+    //console.log(player_list);
 }
+
 
 
 // Called by main.js on register event
@@ -137,8 +136,6 @@ var restore_session = function() {
 var clear_settings = function() {
     status_message("player/clear_settings", "Clearing local settings");
     sessionStorage.removeItem("playerName");
-    sessionStorage.removeItem("playerReady");
-    sessionStorage.removeItem("playerInGame");
     $(".ask-player-name").show();
     $(".player-name").hide();
     $(".container").hide();
@@ -146,7 +143,7 @@ var clear_settings = function() {
 
 var clear_uid = function() {
     status_message("player/clear_uid", "Clearing UID");
-    localStorage.removeItem("clientUniqueID");
+    sessionStorage.removeItem("clientUniqueID");
 }
 
 var toggle_cards = function() {

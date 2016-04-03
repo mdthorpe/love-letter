@@ -84,7 +84,7 @@ io.on('connection', function(socket) {
             "source": 'server',
             "host-list": Game.Clients.getByType('host')
         });
-        
+
 
         io.in(Room).emit('player-list', playerList);
         //socket.broadcast.to(Room).emit('player-list', playerList);
@@ -97,6 +97,16 @@ io.on('connection', function(socket) {
         })
 
         io.in(Room).emit('game-state', Game);
+    };
+
+    var broadcast_message = function(message, flash) {
+        event_stream({
+            "source": 'server',
+            "message": message,
+            "flash": flash
+        })
+
+        io.in(Room).emit('broadcast-message', message, flash);
     };
 
     // Watch for all events for event stream
@@ -187,11 +197,13 @@ io.on('connection', function(socket) {
 
     socket.on('start-game', function(callback) {
         console.log('Handling: start-game');
+        broadcast_message("Starting Game", true);
         event_stream({
             "source": 'app/socket/start-game',
             "event": 'Starting Game'
         })
         start_game();
+        broadcast_player_list();
         broadcast_game();
     });
 
@@ -219,15 +231,20 @@ io.on('connection', function(socket) {
 
         callback({
             "success": true,
-            "card" : card
+            "card": card
         });
     });
 
-    socket.on('play-card', function(card, callback) {
-        console.log(card, callback)
+    socket.on('play-card', function(uid, card, callback) {
+        console.log("Played Card: ", uid, card)
         callback({
             "success": true
         });
+        event_stream({
+            "source": 'app/socket/play-card',
+            "card": card
+        });
+        io.in(Room).emit('played-card', card);
     });
 
     // Debugging Functions
@@ -242,7 +259,6 @@ io.on('connection', function(socket) {
     // Send player list
     socket.on('send-player-list', function(callback) {
         console.log("send player list event");
-        broadcast_player_list();
     });
 
     return false;
@@ -270,23 +286,8 @@ var remove_player = function(socket) {
 // Game Event Handlers
 
 var start_game = function(socket) {
-    if (Game["in_game"] === false) {
-
-        // Push list of player names into Game.
-        // io.sockets.sockets.map(function(e) {
-        //     if (e.hasOwnProperty('username')) {
-        //         var new_player_state = player_init(e.username);
-        //         console.log("Adding player: ", e.username);
-        //         Game['Players'][e.username] = new_player_state;
-        //     }
-        // })
-
-        Game["in_game"] = true;
-        // Game["active_player"] = Object.keys(Game["Players"])[0];
-        Game["round"] = 1
-
-        console.log("Starting Game: ", Game);
-        broadcast_message("Starting Game");
+    if (Game.getInGame() === false) {
+        Game.startGame();
         return true;
     }
     return false
@@ -308,7 +309,6 @@ var draw_card = function(player) {
     }
     return player;
 }
-
 
 //require('express-debug')(app);
 

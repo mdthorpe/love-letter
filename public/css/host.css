@@ -6,6 +6,7 @@ body {
 	margin: 0;
 	padding: 0;
 	background-color: #376568;
+	perspective: 500px;
 
 }
 .box {
@@ -18,19 +19,31 @@ body {
 	background-size: contain;
 	background-position: 50%;
 	background-repeat: no-repeat;
-	animation-duration: 0.5s;
+	animation-duration: .75s;
 	animation-delay: 0s;
 	animation-iteration-count: 1;
 	animation-direction: alternate;
 	animation-fill-mode: forwards;
 }
+
+.cards {
+	width: 40vw;
+	height: 80vh;
+	position: absolute;
+	top: 0vh;
+	left: 45vw;
+	z-index: -1;
+}
 .card {
 	margin-left: auto;
 	margin-right: auto;
-	z-index: -1;
 }
+
+.card[data-anim="playcard"] { animation-name: playcard; }
+
 .card[data-pos="deck"] {transform: translate(0vw, -10vh) rotateX(-0deg);}
 .card[data-pos="discard"] {transform: translate(45vw, -10vh) rotateX(-0deg);}
+.card[data-pos="offscreen"] {transform: translate(-45vw, 100vh) rotateY(90deg) rotateZ(359deg);}
 
 .card[data-face="none"]     {background-image: url('/img/0_none.png');}
 .card[data-face="back"]     {background-image: url('/img/0_back.png');}
@@ -45,10 +58,10 @@ body {
 
 .banner-box{
 	position: fixed;
-	top: 20vh;
-	left: 0vh;
+	top: 30vh;
+	left: 50vw;
 	z-index: 12;
-	width: 100vw;
+	width: 50vw;
 }
 
 ul {
@@ -97,14 +110,10 @@ button {
 	background: #5c5;
 }
 .player[data-player-state="isturn"] {
-	border: 5px solid #c5c;
-	border-right: 2vw solid;
+	border-right: 3vw solid;
 	border-color: red;
+	background-color: #EFFF6C;
 }
-.card {
-	max-height: 80vh;
-}
-
 
 .debug {
 	position: absolute;
@@ -115,4 +124,8 @@ button {
 	width: 33vw;
 	display: inline-block;	
 	margin:1px 0px 0px 1px;
+}
+
+@keyframes playcard {
+	100% {transform: translate(-10vw, -10vh) rotateY(0deg) rotateZ(0deg);}
 }

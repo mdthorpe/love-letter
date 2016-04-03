@@ -1,34 +1,68 @@
 var Deck = require('./deck').init();
 
-
 var Clients = require('./clients');
 exports.Clients = Clients;
 
 var gameState = {
-    "total_players": 0,
-    "in_game": false,
-    "round": 1,
-    "turn": 1,
-    "game_count": 1,
-    "game_over": false,
-    "winner": null,
-    "active_player": null,
-    "turn_phase": 0, // 0,draw 1,play 2,end
+    "numPlayers": 0,
+    "inGame": false,
+    "round": 0,
+    "turn": 0,
+    "gameCount": 0,
+    "gameOver": false,
+    "activePlayer": null
 }
 exports.gameState = gameState;
 
 var nextRound = function() {
-    gameState.round++;
+    console.log("nextRound");
+    gameState.round = gameState.round + 1;
+
+    var players = Clients.getByType("player");
+
+    for ( p in players ){
+        players[p].isActive = false;
+        Clients.updateByUid(p,"isTurn",false);
+    }
+
+    for ( p in players ){
+        console.log("Player: ", players[p]);
+        // Make first player active
+        if (players[p].outOfRound === false){
+            gameState.activePlayer = p;
+            players[p].isActive = true;
+            Clients.updateByUid(p,"isTurn",true);
+            break;
+        }
+    }
 }
 exports.nextRound = nextRound;
 
-var newGame = function(total_players) {
-    total_players = total_players || 1;
+var nextTurn = function() {
+    gameState.turn = gameState.turn + 1;
+}
+exports.nextTurn = nextTurn;
+
+var newGame = function(numPlayers) {
+    numPlayers = total_players || 1;
     gameState.deck = Deck;
     gameState.total_players = total_players;
     return this;
 };
 exports.newGame = newGame;
+
+var getInGame = function() {
+    return gameState.in_game;
+}
+exports.getInGame = getInGame;
+
+var startGame = function() {
+    console.log("startGame");
+    gameState.in_game = true;
+    nextRound();
+    nextTurn();
+}
+exports.startGame = startGame;
 
 var drawCard = function() {
     return gameState.deck.pop();
