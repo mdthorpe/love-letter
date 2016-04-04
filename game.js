@@ -44,21 +44,21 @@ var nextTurn = function() {
 exports.nextTurn = nextTurn;
 
 var newGame = function(numPlayers) {
-    numPlayers = total_players || 1;
+    numPlayers = numPlayers || 1;
     gameState.deck = Deck;
-    gameState.total_players = total_players;
+    gameState.numPlayers = numPlayers;
     return this;
 };
 exports.newGame = newGame;
 
 var getInGame = function() {
-    return gameState.in_game;
+    return gameState.inGame;
 }
 exports.getInGame = getInGame;
 
 var startGame = function() {
     console.log("startGame");
-    gameState.in_game = true;
+    gameState.inGame = true;
     nextRound();
     nextTurn();
 }

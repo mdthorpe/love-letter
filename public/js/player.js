@@ -128,6 +128,12 @@ var restore_session = function() {
         $('.ask-player-name').show();
     }
 
+    if (playerCards) {
+        for ( c in playerCards ) {
+            
+        }
+    }
+
 
     status_message("player/restore_session", "Complete.")
     return false;
@@ -183,13 +189,15 @@ socket.on('player-list', function(player_list) {
     return true;
 });
 
+socket.on('start-game', function() {
+    console.log("start game");
+    draw_card();
+    return true;
+});
+
 
 ////////////////////
-// jquery events
-
-$('.box').click(function() {
-    flip_cards();
-});
+// debug
 
 $('.draw_card').click(function() {
     draw_card();

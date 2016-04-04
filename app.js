@@ -79,11 +79,11 @@ io.on('connection', function(socket) {
             "player-list": Game.Clients.getByType('player')
         });
 
-        var hostList = Game.Clients.getByType('host');
-        event_stream({
-            "source": 'server',
-            "host-list": Game.Clients.getByType('host')
-        });
+        // var hostList = Game.Clients.getByType('host');
+        // event_stream({
+        //     "source": 'server',
+        //     "host-list": Game.Clients.getByType('host')
+        // });
 
 
         io.in(Room).emit('player-list', playerList);
