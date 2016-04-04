@@ -100,12 +100,13 @@ var card_div = function(face, pos) {
 var socket_game_state = function(game) {
     console.log(game.gameState);
     var cards_in_hand = $(".card").length;
+    console.log("cards_in_hand:", cards_in_hand);
 
-    if (game.gameState.in_game === true) {
+    if (game.gameState.inGame === true) {
         if (cards_in_hand === 0) {
             draw_card();
         }
-        if (game.gameState.active_player === clientUniqueID) {
+        if (game.gameState.activePlayer === clientUniqueID) {
             draw_card();
         }
     }
@@ -179,8 +180,8 @@ var flip_cards = function() {
 /////////////////////
 // socket events
 
-socket.on('game-state', function(game_state) {
-    socket_game_state(game_state);
+socket.on('game-state', function(game) {
+    socket_game_state(game);
     return true;
 });
 
@@ -188,13 +189,6 @@ socket.on('player-list', function(player_list) {
     socket_player_list(player_list);
     return true;
 });
-
-socket.on('start-game', function() {
-    console.log("start game");
-    draw_card();
-    return true;
-});
-
 
 ////////////////////
 // debug
