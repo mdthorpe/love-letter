@@ -117,6 +117,18 @@ var socket_player_list = function(player_list) {
     //console.log(player_list);
 }
 
+var get_hand = function() {
+    status_message("player/get_hand", "Retrieving hand from server")
+    socket.emit('get-hand', clientUniqueID, function(callback) {
+        if (callback["success"] === true) {
+            var hand = callback["hand"];
+            // console.log("Cards in hand: ",callback["hand"]);
+            for ( var c in hand ){
+                show_card(hand[c]);
+            }
+        }
+    });
+}
 
 
 // Called by main.js on register event
@@ -128,14 +140,7 @@ var restore_session = function() {
     } else {
         $('.ask-player-name').show();
     }
-
-    if (playerCards) {
-        for ( c in playerCards ) {
-            
-        }
-    }
-
-
+    get_hand()
     status_message("player/restore_session", "Complete.")
     return false;
 }
@@ -211,6 +216,12 @@ $('.flash_banner').click(function() {
         $(".banners").attr("data-anim", "hideBanner").fadeOut();
     }, 2000);
 })
+
+$('.debug-get-hand').click(function() {
+    get_hand();
+})
+
+
 
 
 // forms

@@ -203,8 +203,11 @@ io.on('connection', function(socket) {
             "event": 'Starting Game'
         })
         start_game();
-        broadcast_player_list();
         broadcast_game();
+        broadcast_player_list();
+        callback({
+            "success": true
+        });
     });
 
 
@@ -245,6 +248,7 @@ io.on('connection', function(socket) {
             "card": card
         });
         io.in(Room).emit('played-card', card);
+        Game.nextTurn();
     });
 
     // Debugging Functions
@@ -259,6 +263,23 @@ io.on('connection', function(socket) {
     // Send player list
     socket.on('send-player-list', function(callback) {
         console.log("send player list event");
+        broadcast_player_list();
+    });
+
+    // Send hand
+    // send player hand from game state.
+    socket.on('get-hand', function(uid, callback) {
+        event_stream({
+            "source": 'app/socket/get-hand',
+            "uid": uid
+        });
+        var hand = Game.Clients.getHand(uid);
+        if (hand) {
+            callback({
+                "success": true,
+                "hand": hand
+            })
+        }
     });
 
     return false;

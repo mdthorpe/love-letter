@@ -7,7 +7,7 @@ body {
 	padding: 0;
 	background-color: #376568;
 	perspective: 500px;
-
+	background-image: url('/img/table.png');
 }
 .box {
 	width: 40vw;
@@ -107,12 +107,12 @@ button {
 	color: #444;
 }
 .player[data-player-state="connected"] {
-	background: #5c5;
+	background: #debf85;
 }
 .player[data-player-state="isturn"] {
 	border-right: 3vw solid;
-	border-color: red;
-	background-color: #EFFF6C;
+	border-color: #b34f36;
+    background-color: #b8c7de;
 }
 
 .debug {

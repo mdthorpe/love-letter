@@ -64,7 +64,6 @@ exports.addClient = function(uid, clientType) {
                 "clientType": clientType,
                 "connected": false,
                 "hand": [],
-                "isTurn": false,
                 "winner": false,
                 "outOfRound": false
             }
@@ -99,7 +98,7 @@ exports.addCard = function(uid, card) {
     return false;
 }
 
-exports.getCards = function(uid) {
+exports.getHand = function(uid) {
     if (isPlayer(uid))
         return Clients[uid].hand;
     return false;

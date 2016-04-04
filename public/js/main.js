@@ -65,6 +65,7 @@ socket.on('connect', function() {
         });
 
         if (clientType === "host"){
+        	socket.emit('send-game-state');
         	socket.emit('send-player-list');
         }
     }

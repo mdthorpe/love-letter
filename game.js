@@ -10,7 +10,8 @@ var gameState = {
     "turn": 0,
     "gameCount": 0,
     "gameOver": false,
-    "activePlayer": null
+    "activePlayer": null,
+    "turnOrder" : []
 }
 exports.gameState = gameState;
 
@@ -20,18 +21,16 @@ var nextRound = function() {
 
     var players = Clients.getByType("player");
 
-    for ( p in players ){
+    for ( var p in players ){
         players[p].isActive = false;
-        Clients.updateByUid(p,"isTurn",false);
     }
 
-    for ( p in players ){
-        console.log("Player: ", players[p]);
-        // Make first player active
+    // Make first player active
+    for ( var t in gameState.turnOrder ){
+        var p = gameState.turnOrder[t];
         if (players[p].outOfRound === false){
             gameState.activePlayer = p;
             players[p].isActive = true;
-            Clients.updateByUid(p,"isTurn",true);
             break;
         }
     }
@@ -42,6 +41,15 @@ var nextTurn = function() {
     gameState.turn = gameState.turn + 1;
 }
 exports.nextTurn = nextTurn;
+
+var setTurnOrder = function() {
+    // set turn order
+    var players = Clients.getByType('player');
+    for (var p in players ){
+        gameState.turnOrder.push(p);
+    }
+    console.log("turn order",gameState.turnOrder);
+}
 
 var newGame = function(numPlayers) {
     numPlayers = numPlayers || 1;
@@ -59,6 +67,7 @@ exports.getInGame = getInGame;
 var startGame = function() {
     console.log("startGame");
     gameState.inGame = true;
+    setTurnOrder();
     nextRound();
     nextTurn();
 }

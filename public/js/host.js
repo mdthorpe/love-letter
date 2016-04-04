@@ -1,6 +1,7 @@
 "use strict";
 
 var clientType = "host";
+var activePlayer = "";
 
 var update_player_list = function(players) {
     $("#players").html('');
@@ -9,7 +10,7 @@ var update_player_list = function(players) {
         $("#players").append($('<li>').text(name).addClass("player"));
         if (players[p].connected === true)
             $("#players li:last").attr('data-player-state', 'connected');
-        if (players[p].isTurn === true)
+        if (p === activePlayer)
             $("#players li:last").attr('data-player-state', 'isturn');
     }
 };
@@ -20,8 +21,9 @@ var show_played_card = function(card) {
     $(".cards").append('<div class="box card" data-pos="offscreen" data-face="' + card + '" data-anim="playcard">');
 };
 
-var update_game_state = function(game){
-    console.log("game_state:",game);
+var update_game_state = function(game) {
+    console.log("game_state:", game);
+    activePlayer = game.gameState.activePlayer;
 };
 
 
@@ -53,6 +55,30 @@ var start_game = function() {
     })
 }
 
+// Called by main.js on register event
+//
+var restore_session = function() {
+    status_message("host/restore_session", "Trying to restore session")
+
+    status_message("host/restore_session", "Getting Game State");
+    socket.emit('send-state', function(callback) {
+        if (callback === true) {
+            status_message("host/restore_session", "Game state received");
+            
+        } else
+            status_message("game-state", "Game state failed");
+    })
+
+    status_message("host/restore_session", "Getting player list");
+    socket.emit('send-player-list', function(callback) {
+        if (callback === true) {
+            status_message("host/restore_session", "Player list received");
+        } else
+            status_message("send-player-list", "Player list failed");
+    })
+    status_message("host/restore_session", "Complete.")
+    return false;
+}
 
 // Debug 
 $(".send-state").click(function() {
