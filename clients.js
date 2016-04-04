@@ -89,7 +89,7 @@ exports.setDisconnected = function(uid) {
     Clients[uid].socketId = undefined;
 }
 
-/// Player only functions.. is this crazy?
+// Player only functions.. is this crazy?
 exports.addCard = function(uid, card) {
     if (isPlayer(uid)) {
         Clients[uid].hand.push(card);
@@ -97,6 +97,17 @@ exports.addCard = function(uid, card) {
     }
     return false;
 }
+
+// Player only functions.. is this crazy?
+exports.removeCard = function(uid, card) {
+    for (var c in Clients[uid].hand){
+        if (Clients[uid].hand[c] === card){
+            Clients[uid].hand.splice( c, 1 );
+        }
+    }
+    return false;
+}
+
 
 exports.getHand = function(uid) {
     if (isPlayer(uid))

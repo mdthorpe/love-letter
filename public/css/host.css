@@ -107,7 +107,7 @@ button {
 	color: #444;
 }
 .player[data-player-state="connected"] {
-	background: #debf85;
+	background: #ddd;
 }
 .player[data-player-state="isturn"] {
 	border-right: 3vw solid;

@@ -247,6 +247,7 @@ io.on('connection', function(socket) {
             "source": 'app/socket/play-card',
             "card": card
         });
+        Game.Clients.removeCard(uid, card);
         io.in(Room).emit('played-card', card);
         Game.nextTurn();
     });

@@ -8,8 +8,11 @@ var update_player_list = function(players) {
     for (var p in players) {
         var name = players[p]['playerName'];
         $("#players").append($('<li>').text(name).addClass("player"));
-        if (players[p].connected === true)
-            $("#players li:last").attr('data-player-state', 'connected');
+        if (players[p].connected === true){
+            $("#players li:last").attr('data-player-state', 'connected')
+        } else {
+            $("#players li:last").attr('data-player-state', 'nostate')
+        }
         if (p === activePlayer)
             $("#players li:last").attr('data-player-state', 'isturn');
     }

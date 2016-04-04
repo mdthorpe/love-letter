@@ -121,6 +121,7 @@ var get_hand = function() {
     status_message("player/get_hand", "Retrieving hand from server")
     socket.emit('get-hand', clientUniqueID, function(callback) {
         if (callback["success"] === true) {
+            $('.cards').html('');
             var hand = callback["hand"];
             // console.log("Cards in hand: ",callback["hand"]);
             for ( var c in hand ){
