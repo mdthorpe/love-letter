@@ -20,8 +20,8 @@ var update_player_list = function(players) {
 
 
 var show_played_card = function(card) {
-    console.log(card);
-    $(".cards").append('<div class="box card" data-pos="offscreen" data-face="' + card + '" data-anim="playcard">');
+    $(".cards").append('<div class="box card" data-pos="offscreen" data-face="' 
+        + card + '" data-anim="playcard">');
 };
 
 var update_game_state = function(game) {
@@ -106,7 +106,7 @@ $('.flash-banner').click(function() {
 })
 
 $('.show-played-card').click(function() {
-    show_played_card("guard");
+    show_played_card("none");
 })
 
 

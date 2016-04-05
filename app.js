@@ -250,6 +250,8 @@ io.on('connection', function(socket) {
         Game.Clients.removeCard(uid, card);
         io.in(Room).emit('played-card', card);
         Game.nextTurn();
+        broadcast_game();
+        broadcast_player_list();
     });
 
     // Debugging Functions

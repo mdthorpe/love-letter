@@ -44,6 +44,7 @@ body {
 .card[data-pos="deck"] {transform: translate(0vw, -10vh) rotateX(-0deg);}
 .card[data-pos="discard"] {transform: translate(45vw, -10vh) rotateX(-0deg);}
 .card[data-pos="offscreen"] {transform: translate(-45vw, 100vh) rotateY(90deg) rotateZ(359deg);}
+.card[data-pos="none"] {transform: translate(-10vw, -10vh) rotateX(-0deg);}
 
 .card[data-face="none"]     {background-image: url('/img/0_none.png');}
 .card[data-face="back"]     {background-image: url('/img/0_back.png');}

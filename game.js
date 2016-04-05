@@ -11,13 +11,14 @@ var gameState = {
     "gameCount": 0,
     "gameOver": false,
     "activePlayer": null,
-    "turnOrder" : []
+    "turnOrder" : [],
 }
 exports.gameState = gameState;
 
 var nextRound = function() {
     console.log("nextRound");
-    gameState.round = gameState.round + 1;
+    gameState.round += 1;
+    gameState.turnIndex = 0;
 
     var players = Clients.getByType("player");
 
@@ -25,31 +26,21 @@ var nextRound = function() {
         players[p].isActive = false;
     }
 
-    // Make first player active
-    for ( var t in gameState.turnOrder ){
-        var p = gameState.turnOrder[t];
-        if (players[p].outOfRound === false){
-            gameState.activePlayer = p;
-            players[p].isActive = true;
-            break;
-        }
-    }
+    gameState.activePlayer = gameState.turnOrder[0];
+
 }
 exports.nextRound = nextRound;
 
 var nextTurn = function() {
-    gameState.turn = gameState.turn + 1;
+    // Is there only one left?
+    if ( gameState.turnOrder.length == 1 ){
+        console.log("Round is over");
+    } else {
+        gameState.turnOrder.push(gameState.turnOrder.shift());
+        gameState.activePlayer = gameState.turnOrder[0];
+    }
 }
 exports.nextTurn = nextTurn;
-
-var setTurnOrder = function() {
-    // set turn order
-    var players = Clients.getByType('player');
-    for (var p in players ){
-        gameState.turnOrder.push(p);
-    }
-    console.log("turn order",gameState.turnOrder);
-}
 
 var newGame = function(numPlayers) {
     numPlayers = numPlayers || 1;
@@ -69,7 +60,6 @@ var startGame = function() {
     gameState.inGame = true;
     setTurnOrder();
     nextRound();
-    nextTurn();
 }
 exports.startGame = startGame;
 
@@ -77,3 +67,13 @@ var drawCard = function() {
     return gameState.deck.pop();
 }
 exports.drawCard = drawCard;
+
+
+var setTurnOrder = function() {
+    // set turn order
+    var players = Clients.getByType('player');
+    for (var p in players ){
+        gameState.turnOrder.push(p);
+    }
+    console.log("turn order",gameState.turnOrder);
+}
