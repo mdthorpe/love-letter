@@ -13,9 +13,22 @@ html
             h1 Your Name?
             input(type='text', autocomplete='off', autofocus)
             button Set
-
           .container
             .cards
+          .target-players.overlay(data-pos="flippedup")
+            .target-instruction Pick an Opponent
+            .target-player Joe
+            .target-player Bob the Mac
+            .target-player Phil
+          .target-cards.overlay(data-pos="flippedup")
+            .target-instruction Pick a Card
+            .target-card Priest
+            .target-card Baron
+            .target-card Handmaid
+            .target-card Prince 
+            .target-card King
+            .target-card Countess
+            .target-card.target-princess Princess
           .banner-box
             .banners(data-anim="none")
               .banner Waiting to start.

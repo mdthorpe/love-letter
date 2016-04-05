@@ -5,6 +5,8 @@ var clientType = "player"
 var playerName = sessionStorage.getItem('playerName');
 var playerCards = sessionStorage.getItem('playerCards');
 
+
+
 var set_player_name = function() {
 
     socket.emit('set-player-name', clientUniqueID, playerName, function(connected) {
@@ -195,6 +197,18 @@ socket.on('player-list', function(player_list) {
     socket_player_list(player_list);
     return true;
 });
+
+
+////////////////////
+// buttons
+
+$('.target-player').click(function() {
+    $('.target-players').attr("data-anim","pressed");
+})
+
+$('.target-cards').click(function() {
+    $('.target-cards').attr("data-anim","pressed");
+})
 
 ////////////////////
 // debug

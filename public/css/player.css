@@ -7,6 +7,7 @@ body {
 	padding: 0;
 	background-color: #376568;
 	perspective: 800px;
+	background-image: url("/img/table.png");
 }
 
 .frameT {
@@ -78,6 +79,7 @@ button {
 }
 .player-name {
 	font-style: italic;
+	background-color: hsla(184,31%,20%,.8);
 }
 .player-info {
 	color: white;
@@ -123,6 +125,60 @@ button {
 
 }
 
+.overlay {
+	position: absolute;
+	top: 6vh;
+	height: 80vh;
+	width: 100vw;
+	left: 0vw;
+	text-align: center;
+	background-color: rgba(30,30,30,.4);
+	background-size: contain;
+	animation-duration: 0.3s;
+	animation-delay: 0s;
+	animation-iteration-count: 1;
+	animation-direction: alternate;
+	animation-fill-mode: forwards;
+}
+
+.target-instruction {
+    background-color: rgba(222, 222, 222,1);
+    margin: 2vh 2vh 6vh;
+    padding: 2vh;
+    font-size: 4vh;
+    text-align: center;
+    border: 3px solid rgba(30,30,30,.8);
+    border-radius: 1vh;
+    background-image: url("/img/table.png");
+    font-style: italic;	
+}
+
+.target-player {
+    background-color: rgba(184, 199, 222,1);
+    margin: 3vh;
+    padding: 2vh;
+    font-size: 4vh;
+    text-align: center;
+    border: 3px solid rgba(30,30,30,.8);
+    border-radius: 1vh;
+}
+
+.target-card {
+	background-color: rgba(184, 199, 222,1);
+	margin: 1vh 2vw;
+	padding: 2vh;
+	font-size: 4vh;
+	width: 37vw;
+	text-align: center;
+	border: 3px solid rgba(30,30,30,.8);
+	border-radius: 1vh;
+	display: inline-block;
+}
+
+.target-card.target-princess {
+	width: 81vw;
+}
+
 .guard    { background-image: url('/img/1_guard.png'); }
 .priest   { background-image: url('/img/2_priest.png'); }
 .baron    { background-image: url('/img/3_baron.png'); }
@@ -151,6 +207,31 @@ button {
 .[data-pos="outtop"] {
 	transform: translate(  4vh,  -110vh) rotateX(  -120deg); 
 	z-index: 1; 
+}
+
+.overlay[data-pos="flippedup"] {
+	transform-origin: -10vh -10vh;
+	transform: rotateX(95deg);
+	z-index: 8; 
+}
+
+.overlay[data-pos="offscreen"] {
+	transform: translate(  -0vh,  -0vh);
+	z-index: 8; 
+}
+
+.overlay[data-anim="flipup"]   { 
+	transform-origin: -10vh -10vh;
+	animation-name: flipUp;
+}
+
+.overlay[data-anim="flipdown"] { 
+	transform-origin: -10vh -10vh;
+	animation-name: flipDown;
+}
+.overlay[data-anim="pressed"] {
+	transform-origin: -10vh -10vh; 
+	animation-name: pressed;
 }
 
 .card[data-anim="top"]             { animation-name: bottomcard;}
@@ -218,3 +299,24 @@ button {
 	0% { transform: translate(  0vh,  -110vh) rotateY(   0deg) rotateX(  -120deg)}
   100% { transform: translate(  0vh,  0vh)    rotateY(   0deg)  rotateX(  0deg)}
 }
+
+/*@keyframes flipUp {
+	0% { transform: rotateX(    0deg) }
+  100% { transform: rotateX(   95deg) }
+}*/
+
+@keyframes flipDown {
+	0% { transform: rotateX(  95deg); opacity: 1 }
+  100% { transform: rotateX(   0deg); opacity: 1 }
+}
+
+@keyframes pressed {
+	0% { transform: rotateX(   0deg); opacity: 1 }
+  100% { transform: rotateX( -95deg); opacity: 0 }
+}
+
+/*
+@keyframes pressed {
+	0% { transform: scale(  1); opacity: 1; }
+  100% { transform: scale(  0); opacity: 0; }
+}*/
