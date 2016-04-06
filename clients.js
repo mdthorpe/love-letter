@@ -66,7 +66,8 @@ exports.addClient = function(uid, clientType) {
                 "hand": [],
                 "winner": false,
                 "outOfRound": false,
-                "wins" : 0
+                "wins": 0,
+                "protected" : false,
             }
         } else {
             var newClient = {
@@ -101,9 +102,19 @@ exports.addCard = function(uid, card) {
 
 // Player only functions.. is this crazy?
 exports.removeCard = function(uid, card) {
-    for (var c in Clients[uid].hand){
-        if (Clients[uid].hand[c] === card){
-            Clients[uid].hand.splice( c, 1 );
+    for (var c in Clients[uid].hand) {
+        if (Clients[uid].hand[c] === card) {
+            Clients[uid].hand.splice(c, 1);
+        }
+    }
+    return false;
+}
+
+exports.hasCard = function(uid, card) {
+    for (var c in Clients[uid].hand) {
+        console.log("uid, card ", uid, card);
+        if (Clients[uid].hand[c] === card) {
+            return true;
         }
     }
     return false;

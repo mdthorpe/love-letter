@@ -238,34 +238,63 @@ io.on('connection', function(socket) {
         });
     });
 
-    socket.on('play-card', function(uid, card, callback) {
-        console.log("Played Card: ", uid, card)
+    socket.on('play-card', function(uid, action, callback) {
+        console.log("action: ", action);
+        event_stream({
+            "source": 'app/socket/play-card',
+            "action": action
+        });
+
+        // Handle card played
+        io.in(Room).emit('played-card', action.card);
+
+        if (action.card === 'guard') {
+            // Send 'source' v 'target' message to room.
+            broadcast_message(action.targetPlayer + ' ' + action.card, true); 
+            
+            // Compare card to target player card
+            if(Game.Clients.hasCard(action.targetPlayer,action.targetCard)){            
+                broadcast_message(action.targetPlayer + ' out of round.', true); 
+                // Send 'target out' message to room
+                // Mark player out of round.
+                Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
+            } else {
+                broadcast_message(action.targetPlayer + ' no match', true); 
+            }
+        }
+
+        // Remove card from Players Hand
+        Game.Clients.removeCard(uid, action.card);
+
+        //card_handler(card,socket);
+        
+        // Setup for next turn
+        Game.nextTurn();
+
+        broadcast_game();
+        broadcast_player_list();
+
         callback({
             "success": true
         });
-        event_stream({
-            "source": 'app/socket/play-card',
-            "card": card
-        });
-        Game.Clients.removeCard(uid, card);
-        io.in(Room).emit('played-card', card);
-        Game.nextTurn();
-        broadcast_game();
-        broadcast_player_list();
     });
 
     // Debugging Functions
 
     // Send game state
     socket.on('send-state', function(callback) {
-        console.log("send state event");
+        event_stream({
+            "source": 'app/socket/send-state'
+        });
         broadcast_game();
     });
 
 
     // Send player list
     socket.on('send-player-list', function(callback) {
-        console.log("send player list event");
+        event_stream({
+            "source": 'app/socket/send-player-list'
+        });
         broadcast_player_list();
     });
 
@@ -288,6 +317,16 @@ io.on('connection', function(socket) {
     return false;
 });
 
+
+// Card rules handlers
+
+var card_handler = function(card, socket) {
+    card_handler_guard(socket);
+}
+
+var card_hander_guard = function(socket) {
+    // Ask calling player
+}
 
 // Player Event Handlers
 

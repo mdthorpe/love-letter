@@ -6,10 +6,12 @@ var activePlayer = "";
 var update_player_list = function(players) {
     $("#players").html('');
     for (var p in players) {
-        var name = players[p]['playerName'];
+        var name = players[p].playerName;
         $("#players").append($('<li>').text(name).addClass("player"));
-        if (players[p].connected === true){
+        if (players[p].connected === true) {
             $("#players li:last").attr('data-player-state', 'connected')
+        } else if (players[p].outOfRound) {
+            $("#players li:last").attr('data-player-state', 'outofround')
         } else {
             $("#players li:last").attr('data-player-state', 'nostate')
         }
@@ -20,8 +22,7 @@ var update_player_list = function(players) {
 
 
 var show_played_card = function(card) {
-    $(".cards").append('<div class="box card" data-pos="offscreen" data-face="' 
-        + card + '" data-anim="playcard">');
+    $(".cards").append('<div class="box card" data-pos="offscreen" data-face="' + card + '" data-anim="playcard">');
 };
 
 var update_game_state = function(game) {
@@ -67,7 +68,7 @@ var restore_session = function() {
     socket.emit('send-state', function(callback) {
         if (callback === true) {
             status_message("host/restore_session", "Game state received");
-            
+
         } else
             status_message("game-state", "Game state failed");
     })

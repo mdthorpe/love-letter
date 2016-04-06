@@ -5,7 +5,10 @@ var clientType = "player"
 var playerName = sessionStorage.getItem('playerName');
 var playerCards = sessionStorage.getItem('playerCards');
 
+var targetPlayer = false;
+var targetCard = false;
 
+var outOfRound = false;
 
 var set_player_name = function() {
 
@@ -41,7 +44,26 @@ var play_card = function() {
 
         var cardFace = $(".card[data-pos='top']").attr("data-face");
 
-        socket.emit('play-card', clientUniqueID, cardFace, function(callback) {
+        if (cardFace === "guard") {
+            if (!targetPlayer) {
+                $(".target-players").attr('data-anim','flipdown')    
+                return true;
+            }
+            if (!targetCard) {
+                $(".target-cards").attr('data-anim','flipdown')    
+                return true;
+            }
+
+            console.log("Playing: ", cardFace, targetPlayer, targetCard);
+        }
+
+        var action = {
+            "card"         : cardFace,
+            "targetPlayer" : targetPlayer,
+            "targetCard"   : targetCard
+        }
+
+        socket.emit('play-card', clientUniqueID, action, function(callback) {
             if (callback["success"] === true) {
 
                 // Disable card swapping
@@ -57,6 +79,8 @@ var play_card = function() {
                     .attr('data-anim', 'slidemiddle')
 
             }
+            targetPlayer = '';
+            targetCard = '';
         })
 
         setTimeout(function() {
@@ -84,7 +108,7 @@ var show_card = function(c) {
             flip_cards();
         });
         $('.box').on('swipe', function() {
-            play_card();
+            play_card(false,false);
         });
     } else {
         var d = card_div(c, "outtop");
@@ -100,9 +124,7 @@ var card_div = function(face, pos) {
 }
 
 var socket_game_state = function(game) {
-    console.log(game.gameState);
     var cards_in_hand = $(".card").length;
-    console.log("cards_in_hand:", cards_in_hand);
 
     if (game.gameState.inGame === true) {
         if (cards_in_hand === 0) {
@@ -116,7 +138,49 @@ var socket_game_state = function(game) {
 }
 
 var socket_player_list = function(player_list) {
-    //console.log(player_list);
+
+    var playerState = player_list[clientUniqueID];
+    console.log(playerState);
+
+    if( playerState.outOfRound ){
+        if ( ! outOfRound ) {
+            outOfRound = true;
+            status_message('socket_player_list', "Out of round");
+            return true;
+        }
+    }
+
+    // Don't don anything if you're out of the round.
+    if ( outOfRound ) { return true; }
+
+    // Update target player list
+
+    var target_player_divs = ''
+    target_player_divs += target_instructions();
+
+    for(var p in player_list) {
+        if ( p !== clientUniqueID ){
+            var t = '<div data-player="' 
+                  + player_list[p].uid
+                  + '" class="target-player">' 
+                  + player_list[p].playerName
+                  + '</div>';
+            target_player_divs += t;
+        }
+    }
+    $(".target-players").html(target_player_divs);
+    
+    $('.target-player').click(function() {
+        $('.target-players').attr("data-anim","pressed");
+        console.log("pressed");
+        targetPlayer = $(this).attr('data-player');
+        play_card()
+    })
+
+}
+
+var target_instructions = function() {
+    return '<div class="target-instruction">Pick an Opponent</div>';
 }
 
 var get_hand = function() {
@@ -202,12 +266,10 @@ socket.on('player-list', function(player_list) {
 ////////////////////
 // buttons
 
-$('.target-player').click(function() {
-    $('.target-players').attr("data-anim","pressed");
-})
-
-$('.target-cards').click(function() {
+$('.target-card').click(function() {
     $('.target-cards').attr("data-anim","pressed");
+    targetCard = $(this).attr('data-card');
+    play_card()
 })
 
 ////////////////////
