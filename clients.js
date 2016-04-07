@@ -67,7 +67,7 @@ exports.addClient = function(uid, clientType) {
                 "winner": false,
                 "outOfRound": false,
                 "wins": 0,
-                "protected" : false,
+                "protected": false,
             }
         } else {
             var newClient = {
@@ -120,9 +120,14 @@ exports.hasCard = function(uid, card) {
     return false;
 }
 
-
 exports.getHand = function(uid) {
     if (isPlayer(uid))
         return Clients[uid].hand;
+    return false;
+}
+
+exports.getPlayerName = function(uid) {
+    if (isPlayer(uid))
+        return Clients[uid].playerName;
     return false;
 }

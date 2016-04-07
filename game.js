@@ -68,6 +68,15 @@ var drawCard = function() {
 }
 exports.drawCard = drawCard;
 
+var removeFromRound = function (uid) {
+    for (var t in gameState.turnOrder) {
+        if ( gameState.turnOrder[t] === uid) {
+           gameState.turnOrder.splice(t,1); 
+        }
+    }
+    console.log("removeFromRound:",gameState.turnOrder);    
+}
+exports.removeFromRound = removeFromRound;
 
 var setTurnOrder = function() {
     // set turn order
@@ -75,5 +84,5 @@ var setTurnOrder = function() {
     for (var p in players ){
         gameState.turnOrder.push(p);
     }
-    console.log("turn order",gameState.turnOrder);
+    console.log("setTurnOrder:",gameState.turnOrder);
 }

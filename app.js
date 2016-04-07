@@ -258,6 +258,7 @@ io.on('connection', function(socket) {
                 // Send 'target out' message to room
                 // Mark player out of round.
                 Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
+                Game.removeFromRound(action.targetPlayer)
             } else {
                 broadcast_message(action.targetPlayer + ' no match', true); 
             }
