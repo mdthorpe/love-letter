@@ -248,19 +248,24 @@ io.on('connection', function(socket) {
         // Handle card played
         io.in(Room).emit('played-card', action.card);
 
+        var targetPlayerName = '';
+        if ( action.hasOwnProperty('targetPlayer') ){
+            targetPlayerName = Game.Clients.getPlayerName(action.targetPlayer);
+        }
+
         if (action.card === 'guard') {
             // Send 'source' v 'target' message to room.
-            broadcast_message(action.targetPlayer + ' ' + action.card, true); 
+            broadcast_message(targetPlayerName + ' ' + action.card, true); 
             
             // Compare card to target player card
             if(Game.Clients.hasCard(action.targetPlayer,action.targetCard)){            
-                broadcast_message(action.targetPlayer + ' out of round.', true); 
+                broadcast_message(targetPlayerName + ' out of round.', true); 
                 // Send 'target out' message to room
                 // Mark player out of round.
                 Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
                 Game.removeFromRound(action.targetPlayer)
             } else {
-                broadcast_message(action.targetPlayer + ' no match', true); 
+                broadcast_message(targetPlayerName + ' no match', true); 
             }
         }
 

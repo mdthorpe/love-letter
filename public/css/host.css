@@ -110,6 +110,10 @@ button {
 .player[data-player-state="connected"] {
 	background: #ddd;
 }
+.player[data-player-state="outofround"] {
+	background: #999;
+	color: #444;
+}
 .player[data-player-state="isturn"] {
 	border-right: 3vw solid;
 	border-color: #b34f36;

@@ -242,6 +242,7 @@ button {
 .card[data-anim="playcard"]        { animation-name: playcard;}
 .card[data-anim="drawcardToTop"]   { animation-name: drawcardToTop;}
 .card[data-anim="drawcardToMiddle"]{ animation-name: drawcardToMiddle;}
+.card[data-anim="flipOver"]        { animation-name: flipOver;}
 
 .card[data-face="back"]     { background-image: url('/img/0_back.png')}
 .card[data-face="guard"]    { background-image: url('/img/1_guard.png'); }
@@ -300,23 +301,18 @@ button {
   100% { transform: translate(  0vh,  0vh)    rotateY(   0deg)  rotateX(  0deg)}
 }
 
-/*@keyframes flipUp {
-	0% { transform: rotateX(    0deg) }
-  100% { transform: rotateX(   95deg) }
-}*/
-
 @keyframes flipDown {
 	0% { transform: rotateX(  95deg); opacity: 1 }
   100% { transform: rotateX(   0deg); opacity: 1 }
+}
+
+@keyframes flipOver {
+	0% { transform: rotateY(     0deg) scaleX(1); }
+   50% { transform: rotateY(    90deg) scaleX(0); background-image: url('/img/0_back.png'); }
+  100% { transform: rotateY(   180deg) scaleX(-1); background-image: url('/img/0_back.png'); }
 }
 
 @keyframes pressed {
 	0% { transform: rotateX(   0deg); opacity: 1 }
   100% { transform: rotateX( -95deg); opacity: 0 }
 }
-
-/*
-@keyframes pressed {
-	0% { transform: scale(  1); opacity: 1; }
-  100% { transform: scale(  0); opacity: 0; }
-}*/

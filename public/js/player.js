@@ -8,7 +8,7 @@ var playerCards = sessionStorage.getItem('playerCards');
 var targetPlayer = false;
 var targetCard = false;
 
-var outOfRound = false;
+//var outOfRound = false;
 
 var set_player_name = function() {
 
@@ -46,11 +46,11 @@ var play_card = function() {
 
         if (cardFace === "guard") {
             if (!targetPlayer) {
-                $(".target-players").attr('data-anim','flipdown')    
+                $(".target-players").attr('data-anim', 'flipdown')
                 return true;
             }
             if (!targetCard) {
-                $(".target-cards").attr('data-anim','flipdown')    
+                $(".target-cards").attr('data-anim', 'flipdown')
                 return true;
             }
 
@@ -58,9 +58,9 @@ var play_card = function() {
         }
 
         var action = {
-            "card"         : cardFace,
-            "targetPlayer" : targetPlayer,
-            "targetCard"   : targetCard
+            "card": cardFace,
+            "targetPlayer": targetPlayer,
+            "targetCard": targetCard
         }
 
         socket.emit('play-card', clientUniqueID, action, function(callback) {
@@ -108,7 +108,7 @@ var show_card = function(c) {
             flip_cards();
         });
         $('.box').on('swipe', function() {
-            play_card(false,false);
+            play_card(false, false);
         });
     } else {
         var d = card_div(c, "outtop");
@@ -142,36 +142,34 @@ var socket_player_list = function(player_list) {
     var playerState = player_list[clientUniqueID];
     console.log(playerState);
 
-    if( playerState.outOfRound ){
-        if ( ! outOfRound ) {
-            outOfRound = true;
-            status_message('socket_player_list', "Out of round");
-            return true;
-        }
+    if (playerState.outOfRound) {
+        status_message('socket_player_list', "I am out of the round.");
+        $(".card[data-pos='middle']").attr('data-face', 'back');
+        setTimeout(function() {
+            $(".banners .banner").html("Out of Round");
+            $(".banners").attr("data-anim", "showBanner").fadeIn();
+        }, 3000);
+        return true;
     }
-
-    // Don't don anything if you're out of the round.
-    if ( outOfRound ) { return true; }
-
     // Update target player list
 
     var target_player_divs = ''
     target_player_divs += target_instructions();
 
-    for(var p in player_list) {
-        if ( p !== clientUniqueID ){
+    for (var p in player_list) {
+        if (p !== clientUniqueID && !player_list[p].outOfRound) {
             var t = '<div data-player="' 
-                  + player_list[p].uid
-                  + '" class="target-player">' 
-                  + player_list[p].playerName
-                  + '</div>';
+                    + player_list[p].uid 
+                    + '" class="target-player">' 
+                    + player_list[p].playerName 
+                    + '</div>';
             target_player_divs += t;
         }
     }
     $(".target-players").html(target_player_divs);
-    
+
     $('.target-player').click(function() {
-        $('.target-players').attr("data-anim","pressed");
+        $('.target-players').attr("data-anim", "pressed");
         console.log("pressed");
         targetPlayer = $(this).attr('data-player');
         play_card()
@@ -190,7 +188,7 @@ var get_hand = function() {
             $('.cards').html('');
             var hand = callback["hand"];
             // console.log("Cards in hand: ",callback["hand"]);
-            for ( var c in hand ){
+            for (var c in hand) {
                 show_card(hand[c]);
             }
         }
@@ -267,7 +265,7 @@ socket.on('player-list', function(player_list) {
 // buttons
 
 $('.target-card').click(function() {
-    $('.target-cards').attr("data-anim","pressed");
+    $('.target-cards').attr("data-anim", "pressed");
     targetCard = $(this).attr('data-card');
     play_card()
 })

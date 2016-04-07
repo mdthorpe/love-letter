@@ -8,15 +8,18 @@ var update_player_list = function(players) {
     for (var p in players) {
         var name = players[p].playerName;
         $("#players").append($('<li>').text(name).addClass("player"));
-        if (players[p].connected === true) {
-            $("#players li:last").attr('data-player-state', 'connected')
-        } else if (players[p].outOfRound) {
+        
+        if (players[p].outOfRound) {
             $("#players li:last").attr('data-player-state', 'outofround')
+        } else if (players[p].connected === true) {
+            $("#players li:last").attr('data-player-state', 'connected')
         } else {
             $("#players li:last").attr('data-player-state', 'nostate')
         }
         if (p === activePlayer)
             $("#players li:last").attr('data-player-state', 'isturn');
+
+        
     }
 };
 
@@ -26,7 +29,6 @@ var show_played_card = function(card) {
 };
 
 var update_game_state = function(game) {
-    console.log("game_state:", game);
     activePlayer = game.gameState.activePlayer;
 };
 
