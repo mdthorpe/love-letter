@@ -120,6 +120,15 @@ button {
     background-color: #b8c7de;
 }
 
+.crown {
+	background-image: url("/img/crown.svg");
+    background-size: 8vw 6vw;
+    background-repeat: no-repeat;
+    float: left;
+    width: 8vw;
+    height: 8vh;
+}
+
 .debug {
 	position: absolute;
 	bottom: 13vh;

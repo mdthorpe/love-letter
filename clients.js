@@ -64,7 +64,6 @@ exports.addClient = function(uid, clientType) {
                 "clientType": clientType,
                 "connected": false,
                 "hand": [],
-                "winner": false,
                 "outOfRound": false,
                 "wins": 0,
                 "protected": false,

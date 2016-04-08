@@ -16,7 +16,6 @@ var gameState = {
 exports.gameState = gameState;
 
 var nextRound = function() {
-    console.log("nextRound");
     gameState.round += 1;
     gameState.turnIndex = 0;
 
@@ -34,7 +33,9 @@ exports.nextRound = nextRound;
 var nextTurn = function() {
     // Is there only one left?
     if ( gameState.turnOrder.length == 1 ){
-        console.log("Round is over");
+        var winner = Clients.getByUid(gameState.turnOrder[0])
+        winner.wins += 1;
+        Clients.updateByUid(winner.uid,'wins', winner.wins);
     } else {
         gameState.turnOrder.push(gameState.turnOrder.shift());
         gameState.activePlayer = gameState.turnOrder[0];
