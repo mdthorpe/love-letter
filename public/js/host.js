@@ -3,7 +3,7 @@
 var clientType = "host";
 var activePlayer = "";
 var numPlayers = 0;
-var inGame = 0;
+var inGame = false;
 
 var update_player_list = function(players) {
     $("#players").html('');
@@ -32,7 +32,7 @@ var update_player_list = function(players) {
         $("#players").append(html);
     }
 
-    if (!inGame && (addedCount === numPlayers)) {
+    if (inGame === false && (addedCount === numPlayers)) {
         setTimeout(function() {
             start_game();
         }, 4000);

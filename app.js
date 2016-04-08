@@ -249,13 +249,14 @@ io.on('connection', function(socket) {
         } else if (Game.gameState.roundWinner) {
             var winnerName = Game.Clients.getPlayerName(Game.gameState.roundWinner);
             broadcast_message(winnerName + ' wins the round.', true);
+            broadcast_player_list();
             callback({
                 "success": true,
                 "gameOver": true
             });
             setTimeout(function() {
                 end_round();
-                broadcast_message('Next round starting!', true);
+                broadcast_message('Round: ' + (Game.gameState.round+1), true);
                 start_round();
             }, 5000);
         } else {
