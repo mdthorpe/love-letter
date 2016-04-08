@@ -46,15 +46,19 @@ var play_card = function() {
 
         if (cardFace === "guard") {
             if (!targetPlayer) {
-                $(".target-players").attr('data-anim', 'flipdown')
+                $(".target-players").attr('data-anim', 'flipdown');
                 return true;
             }
             if (!targetCard) {
-                $(".target-cards").attr('data-anim', 'flipdown')
+                $(".target-cards").attr('data-anim', 'flipdown');
                 return true;
             }
-
-            console.log("Playing: ", cardFace, targetPlayer, targetCard);
+        }
+        if (cardFace === "priest") {
+            if (!targetPlayer) {
+                $(".target-players").attr('data-anim', 'flipdown');
+                return true
+            }
         }
 
         var action = {
@@ -81,14 +85,18 @@ var play_card = function() {
             }
             targetPlayer = '';
             targetCard = '';
+            setTimeout(function() {
+                $(".card[data-pos='played']").remove();
+                $(".card[data-pos='bottom']")
+                    .attr('data-pos', 'middle')
+            }, 500);
         })
 
-        setTimeout(function() {
-            $(".card[data-pos='played']").remove();
-            $(".card[data-pos='bottom']")
-                .attr('data-pos', 'middle')
-        }, 1000);
     }
+}
+
+var set_action = function() {
+
 }
 
 var show_card = function(c) {
@@ -158,11 +166,7 @@ var socket_player_list = function(player_list) {
 
     for (var p in player_list) {
         if (p !== clientUniqueID && !player_list[p].outOfRound) {
-            var t = '<div data-player="' 
-                    + player_list[p].uid 
-                    + '" class="target-player">' 
-                    + player_list[p].playerName 
-                    + '</div>';
+            var t = '<div data-player="' + player_list[p].uid + '" class="target-player">' + player_list[p].playerName + '</div>';
             target_player_divs += t;
         }
     }

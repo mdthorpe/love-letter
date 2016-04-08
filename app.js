@@ -14,7 +14,7 @@ var ServerPort = 3000;
 var NumPlayers = 2;
 var MaxWins = 5;
 
-var Game = require('./game').newGame(NumPlayers,MaxWins);
+var Game = require('./game').newGame(NumPlayers, MaxWins);
 
 // wildcard socket events
 var wildcard = require('socketio-wildcard')();
@@ -212,26 +212,8 @@ io.on('connection', function(socket) {
             "action": action
         });
 
-        // Handle card played
-        io.in(Room).emit('played-card', action.card);
-
-        var targetPlayerName = '';
-        if (action.hasOwnProperty('targetPlayer')) {
-            targetPlayerName = Game.Clients.getPlayerName(action.targetPlayer);
-        }
-
-        if (action.card === 'guard') {
-            // Compare card to target player card
-            if (Game.Clients.hasCard(action.targetPlayer, action.targetCard)) {
-                broadcast_message(targetPlayerName + ' out of round.', true);
-                // Send 'target out' message to room
-                // Mark player out of round.
-                Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
-                Game.removeFromRound(action.targetPlayer)
-            } else {
-                broadcast_message(targetPlayerName + ' no match', true);
-            }
-        }
+        // Deal with card event
+        card_handler(action, socket);
 
         // Remove card from Players Hand
         Game.Clients.removeCard(uid, action.card);
@@ -256,7 +238,7 @@ io.on('connection', function(socket) {
             });
             setTimeout(function() {
                 end_round();
-                broadcast_message('Round: ' + (Game.gameState.round+1), true);
+                broadcast_message('Round: ' + (Game.gameState.round + 1), true);
                 start_round();
             }, 5000);
         } else {
@@ -310,12 +292,46 @@ io.on('connection', function(socket) {
 
 // Card rules handlers
 
-var card_handler = function(card, socket) {
-    card_handler_guard(socket);
+var card_handler = function(action, socket) {
+
+    // Handle card played
+    io.in(Room).emit('played-card', action.card);
+
+    var targetPlayerName = '';
+    if (action.hasOwnProperty('targetPlayer')) {
+        targetPlayerName = Game.Clients.getPlayerName(action.targetPlayer);
+    }
+
+    switch (action.card) {
+        case 'guard':
+            card_handler_guard(action, targetPlayerName);
+            break;
+        case 'priest':
+            card_handler_priest(action.targetPlayer, targetPlayerName, socket.id);
+        default:
+            break;
+    }
+    return true;
 }
 
-var card_hander_guard = function(socket) {
-    // Ask calling player
+var card_handler_guard = function(action, targetPlayerName) {
+
+    // Compare card to target player card
+    if (Game.Clients.hasCard(action.targetPlayer, action.targetCard)) {
+        broadcast_message(targetPlayerName + ' out of round.', true);
+        Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
+        Game.removeFromRound(action.targetPlayer)
+    } else {
+        broadcast_message(targetPlayerName + ' no match', true);
+    }
+    return true;
+}
+
+var card_handler_priest = function(targetUid, targetName, playerSocketId) {
+
+    var targetHand = Game.Clients.getHand(targetUid);
+    io.to(playerSocketId).emit('show-hand', "Here is " + targetName + "'s hand", targetHand);
+    return true;
 }
 
 // Player Event Handlers
