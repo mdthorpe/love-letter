@@ -11,9 +11,10 @@ var sleep = require('sleep');
 
 var Room = 'AAAA';
 var ServerPort = 3000;
-var MaxPlayers = 2;
+var NumPlayers = 2;
+var MaxWins = 5;
 
-var Game = require('./game').newGame(MaxPlayers);
+var Game = require('./game').newGame(NumPlayers,MaxWins);
 
 // wildcard socket events
 var wildcard = require('socketio-wildcard')();
@@ -240,6 +241,7 @@ io.on('connection', function(socket) {
         if (Game.gameState.gameWinner) {
             var winnerName = Game.Clients.getPlayerName(Game.gameState.gameWinner);
             broadcast_message(winnerName + ' wins the game.', true);
+            broadcast_player_list();
             callback({
                 "success": true,
                 "gameOver": true
@@ -253,6 +255,7 @@ io.on('connection', function(socket) {
             });
             setTimeout(function() {
                 end_round();
+                broadcast_message('Next round starting!', true);
                 start_round();
             }, 5000);
         } else {
@@ -346,6 +349,7 @@ var start_game = function(socket) {
 var start_round = function(socket) {
     if (Game.getInGame() === true) {
         Game.startRound();
+        io.in(Room).emit('start-round');
         broadcast_game();
         broadcast_player_list();
         return true;

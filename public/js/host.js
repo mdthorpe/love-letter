@@ -2,14 +2,17 @@
 
 var clientType = "host";
 var activePlayer = "";
+var numPlayers = 0;
+var inGame = 0;
 
 var update_player_list = function(players) {
     $("#players").html('');
+    var addedCount = 0
     for (var p in players) {
+        addedCount += 1;
         var name = '<div class="player-name">' + players[p].playerName + '</div>';
         var wins = "";
         for (var n = 0; n < players[p].wins; n += 1) {
-            //wins = wins + '<img class="wins" src="/img/crown.svg" />';
             wins = wins + '<div class="crown"></div>';
         }
         $("#players").append($('<li>').html(name + wins).addClass("player"));
@@ -23,7 +26,16 @@ var update_player_list = function(players) {
         }
         if (p === activePlayer)
             $("#players li:last").attr('data-player-state', 'isturn');
+    }
+    for (var x = 0; x < (numPlayers - addedCount); x += 1) {
+        var html = '<li data-player-state="nostate" class="player"><div class="player-name">' + 'Waiting for player...' + '</div></li>';
+        $("#players").append(html);
+    }
 
+    if (!inGame && (addedCount === numPlayers)) {
+        setTimeout(function() {
+            start_game();
+        }, 4000);
 
     }
 };
@@ -35,6 +47,8 @@ var show_played_card = function(card) {
 
 var update_game_state = function(game) {
     activePlayer = game.gameState.activePlayer;
+    numPlayers = game.gameState.numPlayers;
+    inGame = game.gameState.inGame;
 };
 
 
@@ -143,7 +157,18 @@ socket.on('player-list', function(players) {
 socket.on('played-card', function(card) {
     status_message('host/socket/played-card', 'Played Card: ' + card);
     show_played_card(card);
-    // return false;
+    return false;
+});
+
+socket.on('start-round', function(card) {
+    show_played_card('back');
+    setTimeout(function() {
+        show_played_card('back');
+    }, 300);
+    setTimeout(function() {
+        show_played_card('back');
+    }, 600);
+    return false;
 });
 
 

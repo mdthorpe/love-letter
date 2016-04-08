@@ -5,6 +5,7 @@ exports.Clients = Clients;
 
 var gameState = {
     "numPlayers": 0,
+    "maxWins": 0,
     "inGame": false,
     "round": 0,
     "turn": 0,
@@ -55,7 +56,7 @@ var nextTurn = function() {
         winner.wins += 1;
         Clients.updateByUid(winner.uid, 'wins', winner.wins);
         gameState.roundWinner = winner.uid;
-        if (winner.wins === 5) {
+        if (winner.wins === gameState.maxWins) {
             gameState.gameWinner = winner.uid;
         }
         return false
@@ -66,14 +67,6 @@ var nextTurn = function() {
     }
 }
 exports.nextTurn = nextTurn;
-
-var newGame = function(numPlayers) {
-    numPlayers = numPlayers || 1;
-    gameState.deck = Deck.new();
-    gameState.numPlayers = numPlayers;
-    return this;
-};
-exports.newGame = newGame;
 
 var getInGame = function() {
     return gameState.inGame;
@@ -110,3 +103,13 @@ var setTurnOrder = function() {
     }
     console.log("setTurnOrder:", gameState.turnOrder);
 }
+
+
+var newGame = function(numPlayers,maxWins) {
+    numPlayers = numPlayers || 1;
+    gameState.deck = Deck.new();
+    gameState.numPlayers = numPlayers;
+    gameState.maxWins = maxWins;
+    return this;
+};
+exports.newGame = newGame;
