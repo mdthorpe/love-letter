@@ -140,15 +140,15 @@ var socket_game_state = function(game) {
 var socket_player_list = function(player_list) {
 
     var playerState = player_list[clientUniqueID];
-    console.log(playerState);
 
     if (playerState.outOfRound) {
         status_message('socket_player_list', "I am out of the round.");
-        $(".card[data-pos='middle']").attr('data-face', 'back');
         setTimeout(function() {
             $(".banners .banner").html("Out of Round");
+            $(".card[data-pos='middle']").attr('data-face', 'back');
+            $(".card[data-pos='middle']").attr('data-anim', 'flipOver');
             $(".banners").attr("data-anim", "showBanner").fadeIn();
-        }, 3000);
+        }, 2000);
         return true;
     }
     // Update target player list
@@ -175,6 +175,11 @@ var socket_player_list = function(player_list) {
         play_card()
     })
 
+}
+
+var socket_end_round = function() {
+    $(".cards").html("");
+    $(".banners").hide();
 }
 
 var target_instructions = function() {
@@ -260,6 +265,10 @@ socket.on('player-list', function(player_list) {
     return true;
 });
 
+socket.on('end-round', function(player_list) {
+    socket_end_round();
+    return true;
+});
 
 ////////////////////
 // buttons

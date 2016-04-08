@@ -62,53 +62,6 @@ io.on('connection', function(socket) {
 
     var client = null;
 
-    var event_stream = function(msg) {
-        if (!isEmptyObject(msg)) {
-            if (msg.source) {
-                //msg.ts = moment().format("HH:MM:ss\.SSS");
-                socket.broadcast.to(Room).emit('event', msg);
-                console.log(JSON.stringify(msg))
-            }
-        }
-    };
-
-    var broadcast_player_list = function() {
-        var playerList = Game.Clients.getByType('player');
-        event_stream({
-            "source": 'server',
-            "player-list": Game.Clients.getByType('player')
-        });
-
-        // var hostList = Game.Clients.getByType('host');
-        // event_stream({
-        //     "source": 'server',
-        //     "host-list": Game.Clients.getByType('host')
-        // });
-
-
-        io.in(Room).emit('player-list', playerList);
-        //socket.broadcast.to(Room).emit('player-list', playerList);
-    };
-
-    var broadcast_game = function() {
-        event_stream({
-            "source": 'server',
-            "game-state": Game
-        })
-
-        io.in(Room).emit('game-state', Game);
-    };
-
-    var broadcast_message = function(message, flash) {
-        event_stream({
-            "source": 'server',
-            "message": message,
-            "flash": flash
-        })
-
-        io.in(Room).emit('broadcast-message', message, flash);
-    };
-
     // Watch for all events for event stream
     socket.on('*', function(msg) {
         event_stream({
@@ -203,8 +156,21 @@ io.on('connection', function(socket) {
             "event": 'Starting Game'
         })
         start_game();
-        broadcast_game();
-        broadcast_player_list();
+        callback({
+            "success": true
+        });
+    });
+
+    // Start the next round
+
+    socket.on('next-round', function(callback) {
+        console.log('Handling: next-round!');
+        broadcast_message("Starting Round!", true);
+        event_stream({
+            "source": 'app/socket/next-round',
+            "event": 'Starting Round'
+        })
+        start_round();
         callback({
             "success": true
         });
@@ -249,36 +215,50 @@ io.on('connection', function(socket) {
         io.in(Room).emit('played-card', action.card);
 
         var targetPlayerName = '';
-        if ( action.hasOwnProperty('targetPlayer') ){
+        if (action.hasOwnProperty('targetPlayer')) {
             targetPlayerName = Game.Clients.getPlayerName(action.targetPlayer);
         }
 
         if (action.card === 'guard') {
-            // Send 'source' v 'target' message to room.
-            broadcast_message(targetPlayerName + ' ' + action.card, true); 
-            
             // Compare card to target player card
-            if(Game.Clients.hasCard(action.targetPlayer,action.targetCard)){            
-                broadcast_message(targetPlayerName + ' out of round.', true); 
+            if (Game.Clients.hasCard(action.targetPlayer, action.targetCard)) {
+                broadcast_message(targetPlayerName + ' out of round.', true);
                 // Send 'target out' message to room
                 // Mark player out of round.
                 Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
                 Game.removeFromRound(action.targetPlayer)
             } else {
-                broadcast_message(targetPlayerName + ' no match', true); 
+                broadcast_message(targetPlayerName + ' no match', true);
             }
         }
 
         // Remove card from Players Hand
         Game.Clients.removeCard(uid, action.card);
-
-        //card_handler(card,socket);
-        
-        // Setup for next turn
         Game.nextTurn();
 
-        broadcast_game();
-        broadcast_player_list();
+        // Handle game over and round over
+        if (Game.gameState.gameWinner) {
+            var winnerName = Game.Clients.getPlayerName(Game.gameState.gameWinner);
+            broadcast_message(winnerName + ' wins the game.', true);
+            callback({
+                "success": true,
+                "gameOver": true
+            });
+        } else if (Game.gameState.roundWinner) {
+            var winnerName = Game.Clients.getPlayerName(Game.gameState.roundWinner);
+            broadcast_message(winnerName + ' wins the round.', true);
+            callback({
+                "success": true,
+                "gameOver": true
+            });
+            setTimeout(function() {
+                end_round();
+                start_round();
+            }, 5000);
+        } else {
+            broadcast_game();
+            broadcast_player_list();
+        }
 
         callback({
             "success": true
@@ -362,6 +342,26 @@ var start_game = function(socket) {
     return false
 }
 
+
+var start_round = function(socket) {
+    if (Game.getInGame() === true) {
+        Game.startRound();
+        broadcast_game();
+        broadcast_player_list();
+        return true;
+    }
+    return false
+}
+
+var end_round = function(socket) {
+    if (Game.getInGame() === true) {
+        Game.endRound();
+        io.in(Room).emit('end-round');
+        return true;
+    }
+    return false
+}
+
 var player_init = function(username) {
     var player = {
         "hand": []
@@ -378,6 +378,56 @@ var draw_card = function(player) {
     }
     return player;
 }
+
+
+var broadcast_player_list = function() {
+    var playerList = Game.Clients.getByType('player');
+    event_stream({
+        "source": 'server',
+        "player-list": Game.Clients.getByType('player')
+    });
+
+    // var hostList = Game.Clients.getByType('host');
+    // event_stream({
+    //     "source": 'server',
+    //     "host-list": Game.Clients.getByType('host')
+    // });
+
+
+    io.in(Room).emit('player-list', playerList);
+    //socket.broadcast.to(Room).emit('player-list', playerList);
+};
+
+var broadcast_game = function() {
+    event_stream({
+        "source": 'server',
+        "game-state": Game
+    })
+
+    io.in(Room).emit('game-state', Game);
+};
+
+var broadcast_message = function(message, flash) {
+    event_stream({
+        "source": 'server',
+        "message": message,
+        "flash": flash
+    })
+
+    io.in(Room).emit('broadcast-message', message, flash);
+};
+
+
+var event_stream = function(msg) {
+    if (!isEmptyObject(msg)) {
+        if (msg.source) {
+            //msg.ts = moment().format("HH:MM:ss\.SSS");
+            io.in(Room).emit('event', msg);
+            //socket.broadcast.to(Room).emit('event', msg);
+            console.log(JSON.stringify(msg))
+        }
+    }
+};
 
 //require('express-debug')(app);
 

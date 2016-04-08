@@ -66,7 +66,7 @@ function shuffle(array) {
   return array;
 }
 
-exports.init = function(init) {
+exports.new = function(init) {
     var deck = new_deck()
     deck = shuffle(deck);
     return deck;

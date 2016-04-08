@@ -6,14 +6,14 @@ var activePlayer = "";
 var update_player_list = function(players) {
     $("#players").html('');
     for (var p in players) {
-        var name = '<div class="player-name">'+players[p].playerName+'</div>';
+        var name = '<div class="player-name">' + players[p].playerName + '</div>';
         var wins = "";
-        for ( var n=0; n < players[p].wins; n+=1 ){
+        for (var n = 0; n < players[p].wins; n += 1) {
             //wins = wins + '<img class="wins" src="/img/crown.svg" />';
             wins = wins + '<div class="crown"></div>';
         }
-        $("#players").append($('<li>').html(name+wins).addClass("player"));
-        
+        $("#players").append($('<li>').html(name + wins).addClass("player"));
+
         if (players[p].outOfRound) {
             $("#players li:last").attr('data-player-state', 'outofround')
         } else if (players[p].connected === true) {
@@ -24,7 +24,7 @@ var update_player_list = function(players) {
         if (p === activePlayer)
             $("#players li:last").attr('data-player-state', 'isturn');
 
-        
+
     }
 };
 
@@ -60,8 +60,13 @@ var send_players = function() {
 
 var start_game = function() {
     socket.emit('start-game', function(callback) {
-        if (callback === true) {
+        if (callback["success"] === true) {
             status_message("start-game", "start game");
+            socket.emit('next-round', function(callback) {
+                if (callback === true) {
+                    status_message("start-game", "next round");
+                }
+            })
         }
     })
 }
