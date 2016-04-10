@@ -125,6 +125,24 @@ button {
 
 }
 
+.opponent-card {
+	width: 90%;
+  	height: 90%;
+	position: absolute;
+	top: -15vh;
+	right: -90vw;
+	background-size: contain;
+  	background-position: 50%;
+  	background-repeat: no-repeat;
+  	z-index: 12;
+	animation-duration: 4s;
+ 	animation-delay: 1s;
+ 	animation-iteration-count: 1;
+ 	transform-origin: bottom left;
+ 	margin-left: auto;
+	margin-right: auto;	
+}
+
 .overlay {
 	position: absolute;
 	top: 6vh;
@@ -244,15 +262,17 @@ button {
 .card[data-anim="drawcardToMiddle"]{ animation-name: drawcardToMiddle;}
 .card[data-anim="flipOver"]        { animation-name: flipOver;}
 
-.card[data-face="back"]     { background-image: url('/img/0_back.png')}
-.card[data-face="guard"]    { background-image: url('/img/1_guard.png'); }
-.card[data-face="priest"]   { background-image: url('/img/2_priest.png'); }
-.card[data-face="baron"]    { background-image: url('/img/3_baron.png'); }
-.card[data-face="handmaid"] { background-image: url('/img/4_handmaid.png'); }
-.card[data-face="prince"]   { background-image: url('/img/5_prince.png'); }
-.card[data-face="king"]     { background-image: url('/img/6_king.png'); }
-.card[data-face="countess"] { background-image: url('/img/7_countess.png'); }
-.card[data-face="princess"] { background-image: url('/img/8_princess.png'); }
+[data-face="back"]     { background-image: url('/img/0_back.png')}
+[data-face="guard"]    { background-image: url('/img/1_guard.png'); }
+[data-face="priest"]   { background-image: url('/img/2_priest.png'); }
+[data-face="baron"]    { background-image: url('/img/3_baron.png'); }
+[data-face="handmaid"] { background-image: url('/img/4_handmaid.png'); }
+[data-face="prince"]   { background-image: url('/img/5_prince.png'); }
+[data-face="king"]     { background-image: url('/img/6_king.png'); }
+[data-face="countess"] { background-image: url('/img/7_countess.png'); }
+[data-face="princess"] { background-image: url('/img/8_princess.png'); }
+
+.opponent-card[data-anim="showopponent"] { animation-name: showOpponent;}
 
 
 @keyframes topcard {
@@ -315,4 +335,11 @@ button {
 @keyframes pressed {
 	0% { transform: rotateX(   0deg); opacity: 1 }
   100% { transform: rotateX( -95deg); opacity: 0 }
+}
+
+@keyframes showOpponent {
+	0% { transform: translate(  0vh,  -0vh) rotateZ(   0deg); }
+   10% { transform: translate(  -40vh,  10vh) rotateZ( -10deg); }
+   90% { transform: translate(  -40vh,  10vh) rotateZ( -10deg); }
+  100% { transform: translate(  0vh,  -0vh) rotateX(   0deg); }
 }

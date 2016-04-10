@@ -181,6 +181,15 @@ var socket_player_list = function(player_list) {
 
 }
 
+var socket_show_hand = function(targetData) {
+    console.log("Showing opponent hand", targetData);
+    $('.opponent-card').attr('data-face',targetData.hand[0]);
+    $('.opponent-card').attr('data-anim','showopponent');
+    setTimeout(function() {
+        $('.opponent-card').attr('data-anim','none');
+    },6000);
+}
+
 var socket_end_round = function() {
     $(".cards").html("");
     $(".banners").hide();
@@ -272,6 +281,10 @@ socket.on('player-list', function(player_list) {
 socket.on('end-round', function(player_list) {
     socket_end_round();
     return true;
+});
+
+socket.on('show-hand', function(targetData) {
+    socket_show_hand(targetData);
 });
 
 ////////////////////

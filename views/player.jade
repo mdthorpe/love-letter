@@ -14,8 +14,9 @@ html
             input(type='text', autocomplete='off', autofocus)
             button Set
           .container
+            .opponent-cards
+              .opponent-card(data-face="guard" data-anim="none")
             .cards
-            .oppenent-cards
           .target-players.overlay(data-pos="flippedup")
           .target-cards.overlay(data-pos="flippedup")
             .target-instruction Pick a Card

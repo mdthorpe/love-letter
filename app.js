@@ -330,7 +330,10 @@ var card_handler_guard = function(action, targetPlayerName) {
 var card_handler_priest = function(targetUid, targetName, playerSocketId) {
 
     var targetHand = Game.Clients.getHand(targetUid);
-    io.to(playerSocketId).emit('show-hand', "Here is " + targetName + "'s hand", targetHand);
+    io.to(playerSocketId).emit('show-hand', {
+        'uid': targetUid, 
+        'name': targetName,
+        'hand': targetHand});
     return true;
 }
 
