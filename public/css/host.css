@@ -41,6 +41,8 @@ body {
 
 .card[data-anim="playcard"] { animation-name: playcard; }
 
+.handmaid[data-anim="showShield"] { animation-name: showshield; }
+
 .card[data-pos="deck"] {transform: translate(0vw, -10vh) rotateX(-0deg);}
 .card[data-pos="discard"] {transform: translate(45vw, -10vh) rotateX(-0deg);}
 .card[data-pos="offscreen"] {transform: translate(-45vw, 100vh) rotateY(90deg) rotateZ(359deg);}
@@ -74,14 +76,7 @@ li {
 	display: inline;
 	padding-right: 4px;
 }
-button {
-	font-size: 2vh;
-	background: rgb(210, 211, 211);
-	border: none;
-	height: auto;
-	width: 25vw;
-	height: 4vh;
-}
+
 .players {
 	width: 30vw;
 	transform: translate(0vh, 4vw) rotateX(-0deg);
@@ -129,17 +124,44 @@ button {
     height: 8vh;
 }
 
+.handmaid {
+    background-image: url("/img/shield.svg");
+    background-size: 8vw 8vw;
+    background-repeat: no-repeat;
+    width: 12vw;
+    height: 12vh;
+    top: -5vh;
+    position: relative;
+    right: -36vw;
+    animation-duration: .5s;
+	animation-delay: 1s;
+	animation-iteration-count: 1;
+}
+
 .debug {
 	position: absolute;
-	bottom: 13vh;
+	bottom: 0vh;
+	text-align: center;
+}
+
+button {
+	display: block;
+	width: 50vw;
+	height: 10vh;
+	font-size: 4vh;
 }
 .debug-button {
-	font-size: 2vh;
-	width: 33vw;
+	width: 30vw;
 	display: inline-block;	
-	margin:1px 0px 0px 1px;
+	margin: 1vw 2vh;
 }
 
 @keyframes playcard {
 	100% {transform: translate(-10vw, -10vh) rotateY(0deg) rotateZ(0deg);}
+}
+
+@keyframes showshield {
+    0% { transform: scale(15); opacity: 0;}
+   30% { transform: scale(8); opacity: 1;}
+  100% { transform: scale(1); opacity: 1;}
 }

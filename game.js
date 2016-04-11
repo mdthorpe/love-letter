@@ -45,15 +45,28 @@ var endRound = function() {
         players[p].protected = false;
         players[p].outOfRound = false;
     }
-    gameState.activePlayer = gameState.turnOrder[0];
+    //gameState.activePlayer = gameState.turnOrder[0];
 }
 exports.endRound = endRound;
 
 
 var nextTurn = function() {
-    // Is there only one left?
+
+    var winner = false;
+
+    // Is there only one player left?
     if (gameState.turnOrder.length == 1) {
-        var winner = Clients.getByUid(gameState.turnOrder[0])
+        winner = Clients.getByUid(gameState.turnOrder[0])  
+    }  
+
+    // if there are no cards in the deck. The player
+    // with the highest card value wins.
+    // 
+    if (gameState.deck.length === 0) {
+        winner = Clients.getByUid(gameState.turnOrder[0])
+    }
+    
+    if (winner) {
         winner.wins += 1;
         Clients.updateByUid(winner.uid, 'wins', winner.wins);
         gameState.roundWinner = winner.uid;

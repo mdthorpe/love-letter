@@ -9,13 +9,23 @@ var update_player_list = function(players) {
     $("#players").html('');
     var addedCount = 0
     for (var p in players) {
+        
         addedCount += 1;
+        
         var name = '<div class="player-name">' + players[p].playerName + '</div>';
         var wins = "";
+        var handmaid = "";
+
         for (var n = 0; n < players[p].wins; n += 1) {
             wins = wins + '<div class="crown"></div>';
         }
-        $("#players").append($('<li>').html(name + wins).addClass("player"));
+
+        // Show shield for protected players
+        if (players[p].protected === true) {
+            handmaid = handmaid + '<div class="handmaid" data-anim="showShield"></div>';
+        }
+
+        $("#players").append($('<li>').html(name + wins + handmaid).addClass("player"));
 
         if (players[p].outOfRound) {
             $("#players li:last").attr('data-player-state', 'outofround')
@@ -32,12 +42,11 @@ var update_player_list = function(players) {
         $("#players").append(html);
     }
 
-    if (inGame === false && (addedCount === numPlayers)) {
-        setTimeout(function() {
-            start_game();
-        }, 4000);
-
-    }
+    // if (inGame === false && (addedCount === numPlayers)) {
+    //     setTimeout(function() {
+    //         start_game();
+    //     }, 4000);
+    // }
 };
 
 

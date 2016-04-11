@@ -217,6 +217,8 @@ io.on('connection', function(socket) {
 
         // Remove card from Players Hand
         Game.Clients.removeCard(uid, action.card);
+
+        // Get ready for next turn.
         Game.nextTurn();
 
         // Handle game over and round over
@@ -307,6 +309,9 @@ var card_handler = function(uid, action, socket) {
         case 'baron':
             card_handler_baron(action, uid);
             break;
+        case 'handmaid':
+            card_handler_handmaid(uid);
+            break;
         default:
             break;
     }
@@ -349,14 +354,8 @@ var card_handler_baron = function(action, playerUid) {
     var targetHand = Game.Clients.getHand(target.uid);
     var playerHand = Game.Clients.getHand(player.uid);
 
-    console.log("playerHand", playerHand);
-    console.log("targetHand", targetHand);
-
     var playerCard = Game.Deck.getCardByName(playerHand[0]);
     var targetCard = Game.Deck.getCardByName(targetHand[0]);
-
-    console.log("player card: ", playerCard);
-    console.log("target card: ", targetCard);
 
     var loser = '';
 
@@ -366,15 +365,6 @@ var card_handler_baron = function(action, playerUid) {
     } else if (targetCard.value > playerCard.value) {
         loser = player;
     }
-
-    if (loser) {
-        console.log('Loser: ', loser);
-    } else {
-        console.log('Tie');
-    }
-
-    console.log("player.socketId: ", player.socketId);
-    console.log("target.socketId: ", target.socketId);
 
     io.to(player.socketId).emit('show-hand', {
         'uid': target.uid,
@@ -395,6 +385,12 @@ var card_handler_baron = function(action, playerUid) {
             broadcast_message(loser.playerName + ' out of round.', true);
         }, 3000);
     }
+    return true;
+}
+
+var card_handler_handmaid = function (playerUid) {
+    console.log("Handmaid for: ", playerUid);
+    Game.Clients.updateByUid(playerUid, 'protected', true);
     return true;
 }
 
