@@ -103,7 +103,7 @@ li {
 	color: #444;
 }
 .player[data-player-state="connected"] {
-	background: #ddd;
+	background: #ccc;
 }
 .player[data-player-state="outofround"] {
 	background: #999;
@@ -111,8 +111,9 @@ li {
 }
 .player[data-player-state="isturn"] {
 	border-right: 3vw solid;
-	border-color: #b34f36;
-    background-color: #b8c7de;
+	border-color: #D673A1;
+    background-color: #eee;
+    box-shadow:inset 0px 2px #D673A1;
 }
 
 .crown {
