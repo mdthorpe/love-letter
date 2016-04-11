@@ -73,7 +73,6 @@ io.on('connection', function(socket) {
 
     // Register a GUid for each client, for safe reconnect
     //
-    //socket.on('register', function(data) {
     socket.on('register', function(data, callback) {
         // A GUid was sent from client
         if (data !== null) {
@@ -90,9 +89,6 @@ io.on('connection', function(socket) {
                 }
 
                 Game.Clients.setConnected(uid, socket.id);
-                if (clientType === "player") {
-                    //broadcast_player_list();
-                }
 
                 socket.Room = Room;
                 socket.join(Room);
@@ -221,7 +217,8 @@ io.on('connection', function(socket) {
         // Get ready for next turn.
         Game.nextTurn();
 
-        // Handle game over and round over
+        // Handle 'Game Over' and 'Round Over'
+        //
         if (Game.gameState.gameWinner) {
             var winnerName = Game.Clients.getPlayerName(Game.gameState.gameWinner);
             broadcast_message(winnerName + ' wins the game.', true);
@@ -299,11 +296,10 @@ var card_handler = function(uid, action, socket) {
     // Handle card played
     io.in(Room).emit('played-card', action.card);
 
-    // Check if player is protected by handmaid
-    if ( action.targetPlayerUid ){
+    // Check if target player is protected by handmaid
+    if (action.hasOwnProperty('targetPlayerUid')) {
         var target = Game.Clients.getByUid(action.targetPlayerUid);
         if (target.protected) {
-            console.log("Target protected!");
             return true;
         }
     }
@@ -397,8 +393,7 @@ var card_handler_baron = function(action, playerUid) {
     return true;
 }
 
-var card_handler_handmaid = function (playerUid) {
-    console.log("Handmaid for: ", playerUid);
+var card_handler_handmaid = function(playerUid) {
     Game.Clients.updateByUid(playerUid, 'protected', true);
     return true;
 }
