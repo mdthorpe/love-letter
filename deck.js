@@ -31,19 +31,19 @@ var cards = [{
     "name": "baron",
     "value": 3,
     //"count": 2,
-    "count": 0,
+    "count": 2,
 
 }, {
     "name": "priest",
     "value": 2,
     // "count": 2,
-    "count": 0,
+    "count": 2,
 
 }, {
     "name": "guard",
     "value": 1,
     // "count": 5,
-    "count": 0,
+    "count": 5,
 }]
 
 function new_deck() {

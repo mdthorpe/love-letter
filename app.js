@@ -299,6 +299,15 @@ var card_handler = function(uid, action, socket) {
     // Handle card played
     io.in(Room).emit('played-card', action.card);
 
+    // Check if player is protected by handmaid
+    if ( action.targetPlayerUid ){
+        var target = Game.Clients.getByUid(action.targetPlayerUid);
+        if (target.protected) {
+            console.log("Target protected!");
+            return true;
+        }
+    }
+
     switch (action.card) {
         case 'guard':
             card_handler_guard(action);

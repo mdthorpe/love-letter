@@ -77,6 +77,7 @@ var nextTurn = function() {
     } else {
         gameState.turnOrder.push(gameState.turnOrder.shift());
         gameState.activePlayer = gameState.turnOrder[0];
+        Clients.updateByUid(gameState.turnOrder[0],'protected',false);
         return true
     }
 }
