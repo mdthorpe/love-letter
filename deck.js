@@ -31,7 +31,7 @@ var cards = [{
     "name": "baron",
     "value": 3,
     //"count": 2,
-    "count": 0,
+    "count": 5,
 
 }, {
     "name": "priest",
@@ -42,6 +42,7 @@ var cards = [{
 }, {
     "name": "guard",
     "value": 1,
+    // "count": 5,
     "count": 5,
 }]
 
@@ -78,3 +79,12 @@ exports.new = function(init) {
     deck = shuffle(deck);
     return deck;
 };
+
+exports.getCardByName = function(name) {
+    for (c in cards) {
+        if ( cards[c].name === name) {
+            return cards[c];
+        }
+    }
+    return 0;
+}

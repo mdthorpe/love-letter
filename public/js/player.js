@@ -45,25 +45,22 @@ var play_card = function() {
         var cardFace = $(".card[data-pos='top']").attr("data-face");
 
         if (cardFace === "guard") {
-            if (!targetPlayer) {
-                $(".target-players").attr('data-anim', 'flipdown');
-                return true;
-            }
             if (!targetCard) {
                 $(".target-cards").attr('data-anim', 'flipdown');
                 return true;
             }
         }
-        if (cardFace === "priest") {
+        if ((cardFace === "guard") || (cardFace === "priest") || (cardFace === "baron")) {
             if (!targetPlayer) {
                 $(".target-players").attr('data-anim', 'flipdown');
                 return true
             }
         }
 
+
         var action = {
             "card": cardFace,
-            "targetPlayer": targetPlayer,
+            "targetPlayerUid": targetPlayer,
             "targetCard": targetCard
         }
 
@@ -183,11 +180,11 @@ var socket_player_list = function(player_list) {
 
 var socket_show_hand = function(targetData) {
     console.log("Showing opponent hand", targetData);
-    $('.opponent-card').attr('data-face',targetData.hand[0]);
-    $('.opponent-card').attr('data-anim','showopponent');
+    $('.opponent-card').attr('data-face', targetData.hand[0]);
+    $('.opponent-card').attr('data-anim', 'showopponent');
     setTimeout(function() {
-        $('.opponent-card').attr('data-anim','none');
-    },6000);
+        $('.opponent-card').attr('data-anim', 'none');
+    }, 4000);
 }
 
 var socket_end_round = function() {

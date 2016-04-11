@@ -339,7 +339,7 @@ button {
 
 @keyframes showOpponent {
 	0% { transform: translate(  0vh,  -0vh) rotateZ(   0deg); }
-   10% { transform: translate(  -40vh,  10vh) rotateZ( -10deg); }
-   90% { transform: translate(  -40vh,  10vh) rotateZ( -10deg); }
+   10% { transform: translate(  -30vh,  10vh) rotateZ( -10deg); }
+   90% { transform: translate(  -30vh,  10vh) rotateZ( -10deg); }
   100% { transform: translate(  0vh,  -0vh) rotateX(   0deg); }
 }

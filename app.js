@@ -213,7 +213,7 @@ io.on('connection', function(socket) {
         });
 
         // Deal with card event
-        card_handler(action, socket);
+        card_handler(uid, action, socket);
 
         // Remove card from Players Hand
         Game.Clients.removeCard(uid, action.card);
@@ -292,56 +292,116 @@ io.on('connection', function(socket) {
 
 // Card rules handlers
 
-var card_handler = function(action, socket) {
+var card_handler = function(uid, action, socket) {
 
     // Handle card played
     io.in(Room).emit('played-card', action.card);
 
-    var targetPlayerName = '';
-    if (action.hasOwnProperty('targetPlayer')) {
-        targetPlayerName = Game.Clients.getPlayerName(action.targetPlayer);
-    }
-
     switch (action.card) {
         case 'guard':
-            card_handler_guard(action, targetPlayerName);
+            card_handler_guard(action);
             break;
         case 'priest':
-            card_handler_priest(action.targetPlayer, targetPlayerName, socket.id);
+            card_handler_priest(action, socket.id);
+            break;
+        case 'baron':
+            card_handler_baron(action, uid);
+            break;
         default:
             break;
     }
     return true;
 }
 
-var card_handler_guard = function(action, targetPlayerName) {
+var card_handler_guard = function(action) {
+
+    var target = Game.Clients.getByUid(action.targetPlayerUid);
 
     // Compare card to target player card
-    if (Game.Clients.hasCard(action.targetPlayer, action.targetCard)) {
-        broadcast_message(targetPlayerName + ' out of round.', true);
-        Game.Clients.updateByUid(action.targetPlayer, 'outOfRound', true);
-        Game.removeFromRound(action.targetPlayer)
+    if (Game.Clients.hasCard(target.uid, action.targetCard)) {
+        broadcast_message(target.playerName + ' out of round.', true);
+        Game.Clients.updateByUid(target.uid, 'outOfRound', true);
+        Game.removeFromRound(target.uid)
     } else {
-        broadcast_message(targetPlayerName + ' no match', true);
+        broadcast_message(target.playerName + ' no match', true);
     }
     return true;
 }
 
-var card_handler_priest = function(targetUid, targetName, playerSocketId) {
+var card_handler_priest = function(action, playerSocketId) {
 
-    var targetHand = Game.Clients.getHand(targetUid);
+    var targetPlayer = Game.Clients.getByUid(action.targetPlayerUid);
+    var targetHand = Game.Clients.getHand(action.targetPlayerUid);
+
     io.to(playerSocketId).emit('show-hand', {
-        'uid': targetUid, 
-        'name': targetName,
-        'hand': targetHand});
+        'uid': targetPlayer.uid,
+        'name': targetPlayer.playerName,
+        'hand': targetHand
+    });
+    return true;
+}
+
+var card_handler_baron = function(action, playerUid) {
+
+    var player = Game.Clients.getByUid(playerUid);
+    var target = Game.Clients.getByUid(action.targetPlayerUid);
+
+    var targetHand = Game.Clients.getHand(target.uid);
+    var playerHand = Game.Clients.getHand(player.uid);
+
+    console.log("playerHand", playerHand);
+    console.log("targetHand", targetHand);
+
+    var playerCard = Game.Deck.getCardByName(playerHand[0]);
+    var targetCard = Game.Deck.getCardByName(targetHand[0]);
+
+    console.log("player card: ", playerCard);
+    console.log("target card: ", targetCard);
+
+    var loser = '';
+
+    // player loses
+    if (playerCard.value > targetCard.value) {
+        loser = target;
+    } else if (targetCard.value > playerCard.value) {
+        loser = player;
+    }
+
+    if (loser) {
+        console.log('Loser: ', loser);
+    } else {
+        console.log('Tie');
+    }
+
+    console.log("player.socketId: ", player.socketId);
+    console.log("target.socketId: ", target.socketId);
+
+    io.to(player.socketId).emit('show-hand', {
+        'uid': target.uid,
+        'name': target.playerName,
+        'hand': targetHand
+    });
+
+    io.to(target.socketId).emit('show-hand', {
+        'uid': player.uid,
+        'name': player.playerName,
+        'hand': playerHand
+    });
+
+    if (loser) {
+        Game.Clients.updateByUid(loser.uid, 'outOfRound', true);
+        Game.removeFromRound(loser.uid);
+        setTimeout(function() {
+            broadcast_message(loser.playerName + ' out of round.', true);
+        }, 3000);
+    }
     return true;
 }
 
 // Player Event Handlers
 
 var add_player = function(playername, socket) {
-
-    // set the player name
+    x
     Game.Clients[uid].player_name = player;
 }
 
@@ -386,24 +446,6 @@ var end_round = function(socket) {
     return false
 }
 
-var player_init = function(username) {
-    var player = {
-        "hand": []
-    }
-    player = draw_card(player);
-    return player;
-}
-
-var draw_card = function(player) {
-    if (Deck.length > 0) {
-        if (player["hand"].length < 2) {
-            player["hand"].push(Deck.pop());
-        }
-    }
-    return player;
-}
-
-
 var broadcast_player_list = function() {
     var playerList = Game.Clients.getByType('player');
     event_stream({
@@ -411,16 +453,21 @@ var broadcast_player_list = function() {
         "player-list": Game.Clients.getByType('player')
     });
 
-    // var hostList = Game.Clients.getByType('host');
-    // event_stream({
-    //     "source": 'server',
-    //     "host-list": Game.Clients.getByType('host')
-    // });
-
-
     io.in(Room).emit('player-list', playerList);
-    //socket.broadcast.to(Room).emit('player-list', playerList);
 };
+
+var broadcast_host_list = function() {
+
+    var hostList = Game.Clients.getByType('host');
+    event_stream({
+        "source": 'server',
+        "host-list": Game.Clients.getByType('host')
+    });
+
+
+    io.in(Room).emit('host-list', hostList);
+};
+
 
 var broadcast_game = function() {
     event_stream({
@@ -445,9 +492,7 @@ var broadcast_message = function(message, flash) {
 var event_stream = function(msg) {
     if (!isEmptyObject(msg)) {
         if (msg.source) {
-            //msg.ts = moment().format("HH:MM:ss\.SSS");
             io.in(Room).emit('event', msg);
-            //socket.broadcast.to(Room).emit('event', msg);
             console.log(JSON.stringify(msg))
         }
     }

@@ -1,4 +1,5 @@
 var Deck = require('./deck');
+exports.Deck = Deck;
 
 var Clients = require('./clients');
 exports.Clients = Clients;
