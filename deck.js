@@ -25,25 +25,25 @@ var cards = [{
     "name": "handmaid",
     "value": 4,
     //"count": 2,
-    "count": 8,
+    "count": 0,
 
 }, {
     "name": "baron",
     "value": 3,
     //"count": 2,
-    "count": 2,
+    "count": 1,
 
 }, {
     "name": "priest",
     "value": 2,
     // "count": 2,
-    "count": 2,
+    "count": 1,
 
 }, {
     "name": "guard",
     "value": 1,
     // "count": 5,
-    "count": 5,
+    "count": 2,
 }]
 
 function new_deck() {

@@ -125,6 +125,12 @@ exports.getHand = function(uid) {
     return false;
 }
 
+exports.setHand = function(uid,hand) {
+    if (isPlayer(uid))
+        Clients[uid].hand = hand.slice();
+    return true;
+}
+
 exports.getPlayerName = function(uid) {
     if (isPlayer(uid))
         return Clients[uid].playerName;

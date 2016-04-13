@@ -22,6 +22,33 @@ var set_player_name = function() {
     return false;
 }
 
+var countess_state = function() {
+    var has_countess = false;
+    var has_kingOrPrince = false;
+
+    var cards = $(".card");
+
+    if (cards.length === 2) {
+        for (var c = 0; c < 2; c += 1) {
+            if($(cards[c]).attr('data-face') === 'countess'){
+                has_countess = true;
+            }
+            if($(cards[c]).attr('data-face') === 'king'){
+                has_kingOrPrince = true;
+            }
+            if($(cards[c]).attr('data-face') === 'prince'){
+                has_kingOrPrince = true;
+            }
+        }
+    }
+
+    if (has_kingOrPrince === true && has_countess === true) {
+        return true;
+    }
+
+    return false;
+}
+
 var draw_card = function() {
     status_message("player/draw_card", "Drawing a card")
     if ($(".card").length < 2) {
@@ -29,6 +56,19 @@ var draw_card = function() {
             if (callback["success"] === true) {
                 status_message("player/draw_card", "Drew card: " + callback["card"]);
                 show_card(callback["card"]);
+                var play_countess = countess_state();
+                if (play_countess === true) {
+                    status_message("player/draw_card", "Countess rule in effect");
+                    if ($(".card[data-pos='top']").attr('data-face') !== 'countess'){
+                        flip_cards();
+                    }
+                    $('.box').unbind('click');
+                    $(".banners .banner").html("Must Play Countess");
+                    $(".banners").attr("data-anim", "showBanner").fadeIn();
+                    setTimeout(function() {
+                        $(".banners").attr("data-anim", "hideBanner").fadeOut();
+                    }, 2000);
+                }
             } else {
                 status_message("player/draw_card", "Failed to draw card");
             }
@@ -44,16 +84,25 @@ var play_card = function() {
 
         var cardFace = $(".card[data-pos='top']").attr("data-face");
 
+        if ((cardFace === "guard") 
+            || (cardFace === "priest") 
+            || (cardFace === "baron") 
+            || (cardFace === "king")) {
+            if (!targetPlayer) {
+                $(".target-players").attr('data-anim', 'flipdown');
+                return true
+            }
+        }
+        if (cardFace === "prince") {
+            if (!targetPlayer) {
+                $(".all-players").attr('data-anim', 'flipdown');
+                return true
+            }
+        }
         if (cardFace === "guard") {
             if (!targetCard) {
                 $(".target-cards").attr('data-anim', 'flipdown');
                 return true;
-            }
-        }
-        if ((cardFace === "guard") || (cardFace === "priest") || (cardFace === "baron")) {
-            if (!targetPlayer) {
-                $(".target-players").attr('data-anim', 'flipdown');
-                return true
             }
         }
 
@@ -67,6 +116,9 @@ var play_card = function() {
         socket.emit('play-card', clientUniqueID, action, function(callback) {
             if (callback["success"] === true) {
 
+                targetPlayer = '';
+                targetCard = '';
+
                 // Disable card swapping
                 $('.box').unbind('click');
 
@@ -75,13 +127,10 @@ var play_card = function() {
                     .attr('data-anim', 'playcard')
                     .attr('data-pos', 'played');
 
-
                 $(".card[data-pos='bottom']")
                     .attr('data-anim', 'slidemiddle')
-
             }
-            targetPlayer = '';
-            targetCard = '';
+
             setTimeout(function() {
                 $(".card[data-pos='played']").remove();
                 $(".card[data-pos='bottom']")
@@ -90,10 +139,6 @@ var play_card = function() {
         })
 
     }
-}
-
-var set_action = function() {
-
 }
 
 var show_card = function(c) {
@@ -108,7 +153,6 @@ var show_card = function(c) {
         $(".card[data-pos='outtop']")
             .attr('data-anim', 'drawcardToTop')
             .attr('data-pos', 'top');
-
         $('.box').click(function() {
             flip_cards();
         });
@@ -128,8 +172,12 @@ var card_div = function(face, pos) {
     return '<div data-pos=' + pos + ' data-face=' + face + ' class="box card"></div>';
 }
 
-var socket_game_state = function(game) {
-    var cards_in_hand = $(".card").length;
+var socket_game_state = function(game, player_list) {
+    var cards_in_hand = 0;
+
+    if (player_list[clientUniqueID].hasOwnProperty('hand')) {
+        cards_in_hand = player_list[clientUniqueID].hand.length;
+    }
 
     if (game.gameState.inGame === true) {
         if (cards_in_hand === 0) {
@@ -156,30 +204,37 @@ var socket_player_list = function(player_list) {
         }, 2000);
         return true;
     }
-    // Update target player list
 
+    // Update target player list
     var target_player_divs = ''
-    target_player_divs += target_instructions();
+    target_player_divs += '<div class="target-instruction">Pick an Opponent</div>';
+
+    var all_player_divs = ''
+    all_player_divs += '<div class="target-instruction">Pick a Player</div>';
 
     for (var p in player_list) {
         if (p !== clientUniqueID && !player_list[p].outOfRound) {
             var t = '<div data-player="' + player_list[p].uid + '" class="target-player">' + player_list[p].playerName + '</div>';
             target_player_divs += t;
         }
+        if (!player_list[p].outOfRound) {
+            var t = '<div data-player="' + player_list[p].uid + '" class="target-player">' + player_list[p].playerName + '</div>';
+            all_player_divs += t;
+        }
     }
     $(".target-players").html(target_player_divs);
+    $(".all-players").html(all_player_divs);
 
     $('.target-player').click(function() {
         $('.target-players').attr("data-anim", "pressed");
-        console.log("pressed");
+        $('.all-players').attr("data-anim", "pressed");
         targetPlayer = $(this).attr('data-player');
-        play_card()
+        play_card();
     })
 
 }
 
 var socket_show_hand = function(targetData) {
-    console.log("Showing opponent hand", targetData);
     $('.opponent-card').attr('data-face', targetData.hand[0]);
     $('.opponent-card').attr('data-anim', 'showopponent');
     setTimeout(function() {
@@ -192,17 +247,16 @@ var socket_end_round = function() {
     $(".banners").hide();
 }
 
-var target_instructions = function() {
-    return '<div class="target-instruction">Pick an Opponent</div>';
+var socket_reload_hand = function() {
+    get_hand();
 }
 
 var get_hand = function() {
     status_message("player/get_hand", "Retrieving hand from server")
     socket.emit('get-hand', clientUniqueID, function(callback) {
         if (callback["success"] === true) {
-            $('.cards').html('');
+            $('.cards').html("");
             var hand = callback["hand"];
-            // console.log("Cards in hand: ",callback["hand"]);
             for (var c in hand) {
                 show_card(hand[c]);
             }
@@ -265,8 +319,8 @@ var flip_cards = function() {
 /////////////////////
 // socket events
 
-socket.on('game-state', function(game) {
-    socket_game_state(game);
+socket.on('game-state', function(game, player_list) {
+    socket_game_state(game, player_list);
     return true;
 });
 
@@ -282,6 +336,10 @@ socket.on('end-round', function(player_list) {
 
 socket.on('show-hand', function(targetData) {
     socket_show_hand(targetData);
+});
+
+socket.on('reload-hand', function() {
+    socket_reload_hand();
 });
 
 ////////////////////

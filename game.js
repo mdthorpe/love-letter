@@ -56,16 +56,16 @@ var nextTurn = function() {
 
     // Is there only one player left?
     if (gameState.turnOrder.length == 1) {
-        winner = Clients.getByUid(gameState.turnOrder[0])  
-    }  
+        winner = Clients.getByUid(gameState.turnOrder[0])
+    }
 
     // if there are no cards in the deck. The player
     // with the highest card value wins.
     // 
     if (gameState.deck.length === 0) {
-        winner = Clients.getByUid(gameState.turnOrder[0])
+        winner = findWinner();
     }
-    
+
     if (winner) {
         winner.wins += 1;
         Clients.updateByUid(winner.uid, 'wins', winner.wins);
@@ -77,11 +77,31 @@ var nextTurn = function() {
     } else {
         gameState.turnOrder.push(gameState.turnOrder.shift());
         gameState.activePlayer = gameState.turnOrder[0];
-        Clients.updateByUid(gameState.turnOrder[0],'protected',false);
+        Clients.updateByUid(gameState.turnOrder[0], 'protected', false);
         return true
     }
 }
 exports.nextTurn = nextTurn;
+
+var findWinner = function() {
+    
+    var winner = false;
+    var players = Clients.getByType("player");
+
+    for (var p in players) {
+        if (!players[p].outOfRound) {
+            if (winner.hasOwnProperty('hand')) {
+                if(winner.hand[0].value < players[p].hand[0].value){
+                    winner = players[p];
+                }
+            } else {
+                winner = players[p];
+            }
+        }
+    }
+
+    return winner;
+}
 
 var getInGame = function() {
     return gameState.inGame;
@@ -119,8 +139,7 @@ var setTurnOrder = function() {
     console.log("setTurnOrder:", gameState.turnOrder);
 }
 
-
-var newGame = function(numPlayers,maxWins) {
+var newGame = function(numPlayers, maxWins) {
     numPlayers = numPlayers || 1;
     gameState.deck = Deck.new();
     gameState.numPlayers = numPlayers;

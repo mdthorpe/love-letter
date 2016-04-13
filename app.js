@@ -208,42 +208,44 @@ io.on('connection', function(socket) {
             "action": action
         });
 
-        // Deal with card event
-        card_handler(uid, action, socket);
-
         // Remove card from Players Hand
         Game.Clients.removeCard(uid, action.card);
 
-        // Get ready for next turn.
-        Game.nextTurn();
+        // Deal with card event
+        card_handler(uid, action, socket);
 
-        // Handle 'Game Over' and 'Round Over'
-        //
-        if (Game.gameState.gameWinner) {
-            var winnerName = Game.Clients.getPlayerName(Game.gameState.gameWinner);
-            broadcast_message(winnerName + ' wins the game.', true);
-            broadcast_player_list();
-            callback({
-                "success": true,
-                "gameOver": true
-            });
-        } else if (Game.gameState.roundWinner) {
-            var winnerName = Game.Clients.getPlayerName(Game.gameState.roundWinner);
-            broadcast_message(winnerName + ' wins the round.', true);
-            broadcast_player_list();
-            callback({
-                "success": true,
-                "gameOver": true
-            });
-            setTimeout(function() {
-                end_round();
-                broadcast_message('Round: ' + (Game.gameState.round + 1), true);
-                start_round();
-            }, 5000);
-        } else {
-            broadcast_game();
-            broadcast_player_list();
-        }
+        // Get ready for next turn.
+        setTimeout(function() {
+            Game.nextTurn();
+
+            // Handle 'Game Over' and 'Round Over'
+            //
+            if (Game.gameState.gameWinner) {
+                var winnerName = Game.Clients.getPlayerName(Game.gameState.gameWinner);
+                broadcast_message(winnerName + ' wins the game.', true);
+                broadcast_player_list();
+                callback({
+                    "success": true,
+                    "gameOver": true
+                });
+            } else if (Game.gameState.roundWinner) {
+                var winnerName = Game.Clients.getPlayerName(Game.gameState.roundWinner);
+                broadcast_message(winnerName + ' wins the round.', true);
+                broadcast_player_list();
+                callback({
+                    "success": true,
+                    "gameOver": true
+                });
+                setTimeout(function() {
+                    end_round();
+                    broadcast_message('Round: ' + (Game.gameState.round + 1), true);
+                    start_round();
+                }, 5000);
+            } else {
+                broadcast_game();
+                broadcast_player_list();
+            }
+        },3000);
 
         callback({
             "success": true
@@ -296,17 +298,23 @@ var card_handler = function(uid, action, socket) {
     // Handle card played
     io.in(Room).emit('played-card', action.card);
 
+    var target = false;
+    var player = Game.Clients.getByUid(uid);
+
     // Check if target player is protected by handmaid
     if (action.hasOwnProperty('targetPlayerUid')) {
-        var target = Game.Clients.getByUid(action.targetPlayerUid);
-        if (target.protected) {
+        target = Game.Clients.getByUid(action.targetPlayerUid);
+    }
+    
+    if (target.hasOwnProperty('protected')) {
+        if(target.protected === true) {
             return true;
         }
     }
 
     switch (action.card) {
         case 'guard':
-            card_handler_guard(action);
+            card_handler_guard(action,target);
             break;
         case 'priest':
             card_handler_priest(action, socket.id);
@@ -317,15 +325,19 @@ var card_handler = function(uid, action, socket) {
         case 'handmaid':
             card_handler_handmaid(uid);
             break;
+        case 'prince':
+            card_handler_prince(target);
+            break;
+        case 'king':
+            card_handler_king(player,target);
+            break;
         default:
             break;
     }
     return true;
 }
 
-var card_handler_guard = function(action) {
-
-    var target = Game.Clients.getByUid(action.targetPlayerUid);
+var card_handler_guard = function(action, target) {
 
     // Compare card to target player card
     if (Game.Clients.hasCard(target.uid, action.targetCard)) {
@@ -393,25 +405,40 @@ var card_handler_baron = function(action, playerUid) {
     return true;
 }
 
-var card_handler_handmaid = function(playerUid) {
+var card_handler_handmaid = function(playerUid) {   
     Game.Clients.updateByUid(playerUid, 'protected', true);
     return true;
 }
 
-// Player Event Handlers
-
-var add_player = function(playername, socket) {
-    x
-    Game.Clients[uid].player_name = player;
+var card_handler_prince = function(target) {
+    var targetHand = Game.Clients.getHand(target.uid);
+    if(targetHand[0] === 'princess') {
+        Game.Clients.updateByUid(target.uid, 'outOfRound', true);
+        Game.removeFromRound(target.uid);
+        setTimeout(function() {
+            broadcast_message(target.playerName + ' out of round.', true);
+        }, 2000);
+    } else {
+        Game.Clients.setHand(target.uid,[]);
+        var targetHand = Game.Clients.getHand(target.uid);
+        io.to(target.socketId).emit('reload-hand');
+        broadcast_game();
+    }
 }
 
-var remove_player = function(socket) {
-    delete Players[socket.username];
-    var msg = {
-        "source": 'socket',
-        "event": 'remove player: ' + Players[socket.username]
-    };
-    return msg;
+var card_handler_king = function(player, target) {
+    var targetHand = Game.Clients.getHand(target.uid);
+    var playerHand = Game.Clients.getHand(player.uid);
+
+    var playerNewHand = [targetHand[0]];
+    var targetNewHand = [playerHand[0]];
+
+    Game.Clients.setHand(target.uid,targetNewHand);
+    Game.Clients.setHand(player.uid,playerNewHand);
+
+    io.to(player.socketId).emit('reload-hand');
+    io.to(target.socketId).emit('reload-hand');
+    return true;
 }
 
 
@@ -470,12 +497,14 @@ var broadcast_host_list = function() {
 
 
 var broadcast_game = function() {
+    var playerList = Game.Clients.getByType('player');
     event_stream({
         "source": 'server',
-        "game-state": Game
+        "game-state": Game,
+        "player-list": playerList
     })
 
-    io.in(Room).emit('game-state', Game);
+    io.in(Room).emit('game-state', Game, playerList);
 };
 
 var broadcast_message = function(message, flash) {
