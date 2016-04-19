@@ -2,48 +2,48 @@ var cards = [{
     "name": "princess",
     "value": 8,
     //"count": 1,
-    "count": 0,
+    "count": 1,
 }, {
     "name": "countess",
     "value": 7,
     //"count": 1,
-    "count": 0,
+    "count": 1,
 
 }, {
     "name": "king",
     "value": 6,
     //"count": 1,
-    "count": 0,
+    "count": 1,
 
 }, {
     "name": "prince",
     "value": 5,
     //"count": 2,
-    "count": 0,
+    "count": 2,
 
 }, {
     "name": "handmaid",
     "value": 4,
     //"count": 2,
-    "count": 0,
+    "count": 2,
 
 }, {
     "name": "baron",
     "value": 3,
     //"count": 2,
-    "count": 1,
+    "count": 2,
 
 }, {
     "name": "priest",
     "value": 2,
     // "count": 2,
-    "count": 1,
+    "count": 2,
 
 }, {
     "name": "guard",
     "value": 1,
     // "count": 5,
-    "count": 2,
+    "count": 5,
 }]
 
 function new_deck() {

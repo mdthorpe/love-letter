@@ -7,7 +7,7 @@ var io = require('socket.io')(http);
 var moment = require('moment')
 
 var path = require('path');
-var sleep = require('sleep');
+//var sleep = require('sleep');
 
 var Room = 'AAAA';
 var ServerPort = 3000;
@@ -29,7 +29,7 @@ var request_logger = function(req, res, next) {
     next();
 };
 
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 // serve static content from public dir
 app.use(express.static('public'));

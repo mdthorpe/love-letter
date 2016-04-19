@@ -14,10 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.3",
-    "jade": "^1.11.0",
     "moment": "^2.10.6",
     "nodemon": "^1.9.1",
-    "sleep": "^3.0.0",
+    "pug": "^2.0.0-alpha6",
     "socket.io": "^1.4.5",
     "socketio-wildcard": "^0.2.0"
   },

@@ -1,6 +1,6 @@
 doctype html5
 html
-  include ./includes/head.jade
+  include ./includes/head.pug
   link(href='/css/host.css', rel='stylesheet')
   link(href='/css/message_banner.css', rel='stylesheet')
   body
@@ -16,6 +16,6 @@ html
       button.debug-button.send-state Send State
       button.debug-button.send-players Player List
     //-   button.debug-button.show-played-card Played Card
-    //- include ./includes/status_messages.jade
-  include ./includes/scripts.jade
+    //- include ./includes/status_messages.pug
+  include ./includes/scripts.pug
   script(src='js/host.js')
