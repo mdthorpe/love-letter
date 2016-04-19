@@ -6,13 +6,22 @@ var numPlayers = 0;
 var inGame = false;
 
 var update_player_list = function(players) {
+    
     $("#players").html('');
-    var addedCount = 0
+    
+    var addedCount = 0;
+    var name = '';
+
     for (var p in players) {
         
         addedCount += 1;
         
-        var name = '<div class="player-name">' + players[p].playerName + '</div>';
+        if (players[p].hasOwnProperty('playerName')) {
+            name = '<div class="player-name">' + players[p].playerName + '</div>';
+        } else {
+            name = '<div class="player-name">' + 'No Name' + '</div>';
+        }
+        
         var wins = "";
         var handmaid = "";
 
@@ -55,9 +64,11 @@ var show_played_card = function(card) {
 };
 
 var update_game_state = function(game) {
-    activePlayer = game.gameState.activePlayer;
-    numPlayers = game.gameState.numPlayers;
-    inGame = game.gameState.inGame;
+    // activePlayer = game.gameState.activePlayer;
+    // numPlayers = game.gameState.numPlayers;
+    // inGame = game.gameState.inGame;
+    var cardsLeft = ("0" + game.gameState.deck.length).substr(-2,2)
+    $(".cards-left").html("Cards: " +cardsLeft);
 };
 
 

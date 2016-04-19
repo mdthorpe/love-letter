@@ -139,6 +139,17 @@ li {
 	animation-iteration-count: 1;
 }
 
+.card-count {
+	color: white;
+    position: absolute;
+    right: 0vw;
+    bottom: 0vmax;
+    height: 4vmax;
+    width: 30vmax;
+    font-size: 4vmax;
+    text-align: right;	
+}
+
 .debug {
 	position: absolute;
 	bottom: 0vh;

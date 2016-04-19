@@ -45,7 +45,6 @@ var endRound = function() {
         players[p].protected = false;
         players[p].outOfRound = false;
     }
-    //gameState.activePlayer = gameState.turnOrder[0];
 }
 exports.endRound = endRound;
 
